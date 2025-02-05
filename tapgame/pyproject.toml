@@ -1,0 +1,36 @@
+[project]
+name = "tapgame"
+version = "2025.1.1"
+description = "Tap Game for Kulturpark Košice"
+authors = [
+    {name = "mirek",email = "mirek@cnl.sk"},
+    {name = "juraj"},
+    {name = "vlado"},
+]
+readme = "README.md"
+requires-python = ">=3.13,<4.0"
+dependencies = [
+    "paho-mqtt (>=2.1.0,<3.0.0)",
+    "pydantic-settings (>=2.7.1,<3.0.0)",
+    "loguru (>=0.7.3,<0.8.0)",
+    "sqlmodel (>=0.0.22,<0.0.23)"
+]
+
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.poetry.group.dev.dependencies]
+ipython = "^8.31.0"
+ruff = "^0.9.3"
+litecli = "^1.14.3"
+numpy = "^2.2.2"
+matplotlib = "^3.10.0"
+
+[tool.ruff]
+line-length = 120
+indent-width = 4
+
+[tool.ruff.format]
+indent-style = "space"

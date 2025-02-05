@@ -1,0 +1,50 @@
+services:
+  tapgame:
+    build: ..
+    # ports:
+    # - 1883:1883
+    depends_on:
+      - mosquitto
+    restart: always
+    environment:
+      TAPGAME_BROKER: mosquitto
+      TAPGAME_DB_URI: sqlite:///app/db.sqlite
+
+
+  mosquitto:
+    # url: https://hub.docker.com/_/eclipse-mosquitto
+    image: eclipse-mosquitto:2.0-openssl
+    restart: always
+    volumes:
+      - ./mosquitto:/mosquitto/config:ro
+
+  # nginx:
+  #   # url: https://hub.docker.com/_/nginx
+  #   image: nginx:1.27-alpine
+  #   ports:
+  #   - 80:80
+  #   # volumes:
+  #   # - /some/content:/usr/share/nginx/html:ro 
+
+
+  # db:
+  #   # url: https://hub.docker.com/r/bitnami/postgresql
+  #   image: postgress:latest
+  #   volumes:
+  #   - postgresql:/bitnami/postgresql
+  #   # ports:
+  #   # - 5432:5432
+  #   environment:
+  #   - POSTGRESQL_PASSWORD=secret
+  #   - POSTGRESQL_USERNAME=boris
+  #   - POSTGRESQL_DATABASE=game
+
+  mqtt-explorer:
+    image: smeagolworms4/mqtt-explorer
+    ports:
+    - 4000:4000 
+
+
+
+volumes:
+  postgresql:
