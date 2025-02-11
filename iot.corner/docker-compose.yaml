@@ -20,7 +20,8 @@ services:
     volumes:
       - ./z2m:/app/data/
     devices:
-      - /dev/serial/by-id/usb-Nabu_Casa_SkyConnect_v1.0_067e5cc0ce91ed11b97ccad13b20a988-if00-port0:/dev/ttyUSB0
+    #  - /dev/serial/by-id/usb-Nabu_Casa_SkyConnect_v1.0_067e5cc0ce91ed11b97ccad13b20a988-if00-port0:/dev/ttyUSB0
+      - /dev/serial/by-id/usb-Texas_Instruments_TI_CC2531_USB_CDC___0X00124B001CDFEF8E-if00:/dev/ttyUSBO
     environment:
       - ZIGBEE2MQTT_CONFIG_SERIAL_ADAPTER=ember
       - ZIGBEE2MQTT_CONFIG_SERIAL_PORT=/dev/ttyUSB0
@@ -29,16 +30,16 @@ services:
       - ZIGBEE2MQTT_CONFIG_MQTT_PASSWORD=Kulturpark13
       - ZIGBEE2MQTT_CONFIG_MQTT_BASE_TOPIC=kulturpark/iotcorner/z2m
 
-  app:
-    image: nginx
-    #build: app/
-    restart: always
-    ports:
-    - 80:80
-    # depends_on:
-      # - mosquitto
-    volumes:
-      - ./app/src:/usr/share/nginx/html
+  # app:
+  #   image: nginx
+  #   #build: app/
+  #   restart: always
+  #   ports:
+  #   - 80:80
+  #   # depends_on:
+  #     # - mosquitto
+  #   volumes:
+  #     - ./app/src:/usr/share/nginx/html
 
   # watchtower:
 

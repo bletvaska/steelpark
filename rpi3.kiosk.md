@@ -22,6 +22,12 @@
     $ curl -sSL https://get.docker.com/ | sudo sh
     ```
 
+    a pridat pouzivatela do skupiny docker:
+
+    ```bash
+    $ sudo usermod -aG docker $USER
+    ```
+
 
 4. Nainštalovať chýbajúce balíky pre riešenie
 
@@ -45,8 +51,8 @@
    setxkbmap -option terminate:ctrl_alt_bksp
 
    # Auto-detect resolution and store in variables
-   resx=$(cut -d, -f1 /sys/class/graphics/fb0/virtual_size)
-   resy=$(cut -d, -f2 /sys/class/graphics/fb0/virtual_size)
+   width=$(cut -d, -f1 /sys/class/graphics/fb0/virtual_size)
+   height=$(cut -d, -f2 /sys/class/graphics/fb0/virtual_size)
 
    # cleanup chromium
    sed -i 's/"exited_cleanly":false/"exited_cleanly":true/' "${HOME}/.config/chromium/Local State"
@@ -59,7 +65,7 @@
         --noerrdialogs \
         --disable-infobars \
         --kiosk \
-        --window-size=$resx,$resy --window-position=0,0 \
+        --window-size="${width},${height}" --window-position=0,0 \
         "${URL}"
    ```
 
@@ -104,6 +110,39 @@ konzolovy start:
 ```bash
 $ systemctl --quiet set-default multi-user.target
 ```
+
+
+
+
+X. Start htop na konzole 2
+
+    Ulozit (asi) do suboru `/usr/local/lib/systemd/system/htop.service` vid https://unix.stackexchange.com/questions/224992/where-do-i-put-my-systemd-unit-file
+
+    Ulozit do suboru `/etc/systemd/system/htop.service`
+
+    ```
+    [Unit]
+    Description=htop on tty2
+
+    [Service]
+    Type=simple
+    ExecStart=/usr/bin/htop
+    StandardInput=tty
+    StandardOutput=tty
+    TTYPath=/dev/tty2
+
+    [Install]
+    WantedBy=multi-user.target
+    ```
+
+    A zapnut:
+
+    ```bash
+    $ sudo systemctl enable htop.service
+    ```
+
+
+
 
 8. Reboot
 
