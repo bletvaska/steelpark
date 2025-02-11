@@ -40,3 +40,5 @@ Je to trojkompozicia:
 * nginx + vlastna appka
 
 Na stranke je niekolko elementov, ktore patria do skupiny `socket` a maju jedinecne identifikatory `socket-X`, kde `X` je ciselny identifikator zasuvky. Pridat dalsie zariadenie znamena pridat dalsi element do HTML kodu, pomocou CSS ho spravne umiestnit a pridat ho so zodpovedajucim nazvom (`socket-X`) do Zigbee2MQTT.
+
+Kedze je ale nasadenie cez externy web a externe mqtt, tym padom sa spusta len Zigbee2MQTT.

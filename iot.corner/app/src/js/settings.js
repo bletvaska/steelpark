@@ -16,6 +16,6 @@ const mqtt = {
     // port: 8000,
     port: 8884,
     topicPrefix: "kulturpark/iotcorner",
-    clientId: "control_panel",
-    // clientId: `control_panel_${generateHash()}`,
+    // clientId: "control_panel",
+    clientId: `control_panel_${generateHash()}`,
 };

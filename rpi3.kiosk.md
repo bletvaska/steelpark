@@ -5,6 +5,7 @@
     * zapnúť ssh
     * pripojiť sa na WiFi
 
+
 2. Aktualizovať
 
     ```bash
@@ -14,34 +15,22 @@
         lightdm
     ```
 
+
 3. Nainštalovať docker
 
     ```bash
     $ curl -sSL https://get.docker.com/ | sudo sh
     ```
 
-4. Nainštalovať chromium
+
+4. Nainštalovať chýbajúce balíky pre riešenie
 
     ```bash
-    sudo apt install --no-install-recommends --yes chromium-browser
+    $ sudo apt install --no-install-recommends --yes chromium-browser
     ```
 
-6. Upraviť súbor `/etc/default/nodm` nasledovne:
 
-   ```
-   # Set NODM_ENABLED to something different than 'false' to enable nodm
-   NODM_ENABLED=true
-
-   # User to autologin for
-   NODM_USER=maker
-
-   # The Xserver executable and the display name can be omitted, but should
-   # be placed in front, if nodm's defaults shall be overridden.
-   # with no cursor option
-   NODM_X_OPTIONS='-nolisten tcp -nocursor
-   ```
-
-7. Vytvoriť súbor `/home/maker/.xsession` nasledovne:
+5. Vytvoriť súbor `/home/maker/.xinitrc` nasledovne:
 
    ```
    #!/usr/bin/env bash
@@ -73,6 +62,9 @@
         --window-size=$resx,$resy --window-position=0,0 \
         "${URL}"
    ```
+
+
+6. Zabezpečiť autologin:
 
 
 Autologin:
@@ -135,3 +127,21 @@ hdmi_force_hotplug=1
 * https://fleetstack.io/blog/raspberry-pi-kiosk-tutorial
 * https://gist.github.com/hrr/1a8d769255fdedc7f0b6a18e7fab2e2a
 * https://forums.raspberrypi.com/viewtopic.php?t=294014
+
+
+## Cache
+
+6. Upraviť súbor `/etc/default/nodm` nasledovne:
+
+   ```
+   # Set NODM_ENABLED to something different than 'false' to enable nodm
+   NODM_ENABLED=true
+
+   # User to autologin for
+   NODM_USER=maker
+
+   # The Xserver executable and the display name can be omitted, but should
+   # be placed in front, if nodm's defaults shall be overridden.
+   # with no cursor option
+   NODM_X_OPTIONS='-nolisten tcp -nocursor
+   ```
