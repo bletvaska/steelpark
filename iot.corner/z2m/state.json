@@ -1,0 +1,48 @@
+{
+    "0x08ddebfffed746e0": {
+        "state": "OFF",
+        "power_on_behavior": "previous",
+        "update": {
+            "state": "idle",
+            "installed_version": 33816613,
+            "latest_version": 33816613
+        },
+        "update_available": false
+    },
+    "0x8c65a3fffe86c96e": {
+        "state": "OFF",
+        "power_on_behavior": "previous",
+        "update": {
+            "state": "available",
+            "installed_version": 33816580,
+            "latest_version": 33816613
+        }
+    },
+    "0x08ddebfffed74f92": {
+        "state": "OFF",
+        "power_on_behavior": "previous",
+        "update": {
+            "state": "available",
+            "installed_version": 33816580,
+            "latest_version": 33816613
+        }
+    },
+    "0xd44867fffe555688": {
+        "state": "ON",
+        "power_on_behavior": "previous",
+        "update": {
+            "state": "available",
+            "installed_version": 33816580,
+            "latest_version": 33816613
+        }
+    },
+    "0x8c65a3fffe86d52b": {
+        "state": "OFF",
+        "power_on_behavior": "previous",
+        "update": {
+            "state": "idle",
+            "installed_version": 33816613,
+            "latest_version": 33816613
+        }
+    }
+}

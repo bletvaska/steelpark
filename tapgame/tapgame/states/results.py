@@ -57,8 +57,8 @@ class Results(State):
         if not scores:
             return None
         
-        # create 9 bins
-        bins = np.linspace(min(scores), max(scores), 9)
+        # create bins
+        bins = np.linspace(min(scores), max(scores), Settings().gauss_bins)
 
         # create histogram
         hist_values, bin_edges = np.histogram(scores, bins=bins)

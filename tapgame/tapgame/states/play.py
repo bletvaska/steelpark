@@ -24,7 +24,6 @@ class Play(State):
         payload = {
             "name": self.name,
             "player": player,
-            "table": self.top_players
         }
         
         self.context.mqtt_client.publish(

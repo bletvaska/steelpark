@@ -1,0 +1,63 @@
+.image-container {
+    position: relative;
+    display: inline-block;
+}
+
+/* fan */
+#socket-1 {
+    position: absolute;
+    top: 53%;
+    left: 0%;
+    width: 11%;
+    height: 12%;
+    /* background-color: rgba(255, 0, 0, 0.3); */
+    cursor: pointer;
+}
+
+/* tv */
+#socket-2 {
+    position: absolute;
+    top: 47%;
+    left: 25%;
+    width: 15%;
+    height: 14%;
+    /* background-color: rgba(255, 0, 0, 0.3); */
+    cursor: pointer;
+}
+
+/* akvarko */
+#socket-3 {
+    position: absolute;
+    top: 47%;
+    left: 61%;
+    width: 10%;
+    height: 10%;
+    /* background-color: rgba(255, 0, 0, 0.3); */
+    cursor: pointer;
+}
+
+/* pracka */
+#socket-4 {
+    position: absolute;
+    top: 65%;
+    left: 80%;
+    width: 10%;
+    height: 10%;
+    /* background-color: rgba(255, 0, 0, 0.3); */
+    cursor: pointer;
+}
+
+/* roleta */
+#socket-5 {
+    position: absolute;
+    top: 36%;
+    left: 44%;
+    width: 10%;
+    height: 23%;
+    /* background-color: rgba(255, 0, 0, 0.3); */
+    cursor: pointer;
+}
+
+.click-area:hover {
+    background-color: rgba(255, 0, 0, 0.1); 
+}

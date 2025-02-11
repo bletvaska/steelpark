@@ -1,0 +1,54 @@
+homeassistant: false
+frontend: true
+mqtt:
+  base_topic: zigbee2mqtt
+  server: http://mosquitto
+serial:
+  port: /dev/ttyUSB0
+  adapter: ember
+advanced:
+  log_output:
+    - console
+  network_key:
+    - 218
+    - 45
+    - 52
+    - 165
+    - 136
+    - 64
+    - 92
+    - 163
+    - 73
+    - 101
+    - 198
+    - 223
+    - 59
+    - 164
+    - 166
+    - 126
+  pan_id: 16113
+  ext_pan_id:
+    - 93
+    - 127
+    - 209
+    - 13
+    - 9
+    - 101
+    - 119
+    - 165
+  homeassistant_legacy_entity_attributes: false
+  legacy_api: false
+  legacy_availability_payload: false
+device_options:
+  legacy: false
+devices:
+  '0x08ddebfffed746e0':
+    friendly_name: socket-4
+  '0x8c65a3fffe86c96e':
+    friendly_name: socket-2
+  '0x08ddebfffed74f92':
+    friendly_name: socket-3
+  '0xd44867fffe555688':
+    friendly_name: socket-1
+  '0x8c65a3fffe86d52b':
+    friendly_name: socket-5
