@@ -23,11 +23,21 @@ function toggleSocket(client, socketId){
     publishMessage(client, `z2m/${socketId}/set`, {"state": "TOGGLE"} );
 }
 
+function toggleTv(client, deviceId){
+    publishMessage(client, `z2m/${deviceId}/set`, {"ir_code_to_send": "xxx"} );
+}
+
 window.addEventListener("load", function (event) {
     // add onclick handlers
     document.querySelectorAll(".socket").forEach(button => {
         button.addEventListener("click", function(event) {
             toggleSocket(client, event.target.id);
+        });
+    });
+
+    document.querySelectorAll("#remote").forEach(button => {
+        button.addEventListener("click", function(event) {
+            toggleTv(client, event.target.id);
         });
     });
 
