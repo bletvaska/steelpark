@@ -21,23 +21,28 @@ class Settings(BaseSettings):
 
     @computed_field
     @property
-    def keyboard_topic(self) -> int:
+    def keyboard_topic(self) -> str:
         return f'{self.topic_prefix}/keyboard'
     
     @computed_field
     @property
-    def screen_topic(self) -> int:
+    def screen_topic(self) -> str:
         return f'{self.topic_prefix}/screen'
     
     @computed_field
     @property
-    def results_topic(self) -> int:
+    def results_topic(self) -> str:
         return f'{self.topic_prefix}/results'
         
     @computed_field
     @property
-    def backend_topic(self) -> int:
+    def backend_topic(self) -> str:
         return f'{self.topic_prefix}/backend'
+    
+    @computed_field
+    @property
+    def bridge_topic(self) -> str:
+        return f'{self.topic_prefix}/bridge'
 
     model_config = SettingsConfigDict(
         env_prefix='TAPGAME_',

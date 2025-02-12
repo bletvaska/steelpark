@@ -10,7 +10,7 @@ services:
       TAPGAME_DB_URI: sqlite:///app/db.sqlite
 
   ui:
-    image: bletvaska/gaussgame-ui
+    image: dillir/gauss-frontend
     depends_on:
       - mosquitto
       - core
