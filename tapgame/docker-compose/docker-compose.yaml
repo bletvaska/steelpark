@@ -14,7 +14,9 @@ services:
     depends_on:
       - mosquitto
       - core
-    restart: allways
+    restart: always
+    ports:
+      - 80:80
     environment:
       VITE_BROKER_URL: mosquitto
       VITE_BROKER_PORT: 1883
