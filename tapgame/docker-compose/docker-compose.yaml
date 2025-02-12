@@ -17,17 +17,15 @@ services:
     restart: always
     ports:
       - 80:80
-    environment:
-      VITE_BROKER_URL: mosquitto
-      VITE_BROKER_PORT: 1883
-#      VITE_BROKER_USERNAME:
-#      VITE_BROKER_PASSWORD:
 
 
   mosquitto:
     # url: https://hub.docker.com/_/eclipse-mosquitto
     image: eclipse-mosquitto:2.0-openssl
     restart: always
+    ports:
+    - 8000:8000
+    - 1883:1883
     volumes:
       - ./mosquitto:/mosquitto/config:ro
 
