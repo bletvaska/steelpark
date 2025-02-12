@@ -1,14 +1,25 @@
 services:
-  tapgame:
-    build: ..
-    # ports:
-    # - 1883:1883
+  core:
+    image: bletvaska/gaussgame-core
+#    build: ..
     depends_on:
       - mosquitto
     restart: always
     environment:
       TAPGAME_BROKER: mosquitto
       TAPGAME_DB_URI: sqlite:///app/db.sqlite
+
+  ui:
+    image: bletvaska/gaussgame-ui
+    depends_on:
+      - mosquitto
+      - core
+    restart: allways
+    environment:
+      VITE_BROKER_URL: mosquitto
+      VITE_BROKER_PORT: 1883
+#      VITE_BROKER_USERNAME:
+#      VITE_BROKER_PASSWORD:
 
 
   mosquitto:
@@ -17,14 +28,6 @@ services:
     restart: always
     volumes:
       - ./mosquitto:/mosquitto/config:ro
-
-  # nginx:
-  #   # url: https://hub.docker.com/_/nginx
-  #   image: nginx:1.27-alpine
-  #   ports:
-  #   - 80:80
-  #   # volumes:
-  #   # - /some/content:/usr/share/nginx/html:ro 
 
 
   # db:
@@ -39,12 +42,12 @@ services:
   #   - POSTGRESQL_USERNAME=boris
   #   - POSTGRESQL_DATABASE=game
 
-  mqtt-explorer:
-    image: smeagolworms4/mqtt-explorer
-    ports:
-    - 4000:4000 
+#  mqtt-explorer:
+#    image: smeagolworms4/mqtt-explorer
+#    ports:
+#    - 4000:4000 
 
 
 
-volumes:
-  postgresql:
+#volumes:
+#  postgresql:
