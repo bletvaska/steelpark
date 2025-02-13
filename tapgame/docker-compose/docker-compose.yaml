@@ -8,6 +8,8 @@ services:
     environment:
       TAPGAME_BROKER: mosquitto
       TAPGAME_DB_URI: sqlite:///app/db.sqlite
+    volumes:
+      - db:/app
 
 
   bridge:
@@ -42,3 +44,7 @@ services:
     volumes:
       - ./mosquitto:/mosquitto/config:ro
 
+
+volumes:
+  db: {}
+  

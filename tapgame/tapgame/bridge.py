@@ -1,11 +1,12 @@
 #!/usr/bin/env python3
 
-# from gpiozero import Button
+from gpiozero import Button
 import json
 from signal import pause
 from time import sleep
 import paho.mqtt.client as mqtt
 from loguru import logger
+
 from .models.settings import get_settings
 
 
@@ -35,9 +36,19 @@ def main():
     logger.info('Initializing')
     init_mqtt_client()
 
-    # button = Button(INPUT_PIN)
-    # button.when_pressed = on_press
+    button = Button(INPUT_PIN)
+    button.when_pressed = on_press
 
+    client.connect(settings.broker, settings.port, 60)
+    client.publish(
+        f"{settings.bridge_topic}/status",
+        json.dumps({"status": "online"}),
+        retain=True,
+    )
+    client.loop_start()
+
+
+    logger.info('Waiting for events...')
     pause()
 
     logger.info("Going down...")
@@ -47,6 +58,8 @@ def main():
         json.dumps({"status": "offline"}),
         retain=True,
     )
+
+    client.loop_stop()
     sleep(0.1)
     client.disconnect()
 
