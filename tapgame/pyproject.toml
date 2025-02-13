@@ -1,6 +1,6 @@
 [project]
 name = "tapgame"
-version = "2025.1.1"
+version = "2025.1.2"
 description = "Tap Game for Kulturpark Košice"
 authors = [
     {name = "mirek",email = "mirek@cnl.sk"},
@@ -38,3 +38,4 @@ indent-style = "space"
 
 
 [project.scripts]
+tapbridge = 'tapgame.bridge:main'
