@@ -5,15 +5,18 @@ import paho.mqtt.client as mqtt
 from loguru import logger
 from pydantic import ValidationError
 
+
 from .models.player import Player
 from .models.settings import Settings
 from .states.start import Start
+from .states.results import Results
+from .states.play import Play
 
 
 class Context:
     def __init__(self):
         # prepare context variables
-        self.state = Start(self)
+        self.state = Play(self)
         self.player: Player = None
         self.table = []
         try:
@@ -79,7 +82,7 @@ class Context:
 
         logger.info("Disconnecting from MQTT")
         self.mqtt_client.publish(
-            f"{self.settings.bakend_topic}/status",
+            f"{self.settings.backend_topic}/status",
             json.dumps({"status": "offline"}),
             retain=True,
         )
