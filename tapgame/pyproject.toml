@@ -1,6 +1,6 @@
 [project]
 name = "tapgame"
-version = "2025.1.2"
+version = "2025.1.4"
 description = "Tap Game for Kulturpark Košice"
 authors = [
     {name = "mirek",email = "mirek@cnl.sk"},
@@ -14,7 +14,7 @@ dependencies = [
     "pydantic-settings (>=2.7.1,<3.0.0)",
     "loguru (>=0.7.3,<0.8.0)",
     "sqlmodel (>=0.0.22,<0.0.23)",
-    "numpy (>=2.2.2,<3.0.0)"
+    # "numpy (>=2.2.2,<3.0.0)"
 ]
 
 
@@ -26,8 +26,8 @@ build-backend = "poetry.core.masonry.api"
 ipython = "^8.31.0"
 ruff = "^0.9.3"
 litecli = "^1.14.3"
-numpy = "^2.2.2"
-matplotlib = "^3.10.0"
+# numpy = "^2.2.2"
+# matplotlib = "^3.10.0"
 
 [tool.ruff]
 line-length = 120

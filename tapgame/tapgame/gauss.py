@@ -1,11 +1,23 @@
+import math
 from collections import Counter
-import numpy as np
+# import numpy as np
 import matplotlib.pyplot as plt
 from sqlmodel import Session, select
 
 from .helpers import get_db_engine
 from .models.player import Player
 
+def mean(values):
+    return sum(values) / len(values)
+
+def stddev(values, mean_value):
+    variance = sum((x - mean_value) ** 2 for x in values) / len(values)
+    return math.sqrt(variance)
+
+def gaussian(x, mean, std_dev):
+    coefficient = 1 / (std_dev * math.sqrt(2 * math.pi))
+    exponent = math.exp(-0.5 * ((x - mean) / std_dev) ** 2)
+    return coefficient * exponent
 
 # 📥 Načíta skóre hráčov z databázy
 with Session(get_db_engine()) as session:
@@ -17,52 +29,48 @@ if not scores:
     exit()
 
 # 📊 Prevod na numpy array
-scores = np.array(scores)
+# scores = np.array(scores)
 
 # 📈 Výpočet priemeru a smerodajnej odchýlky
-mean_score = np.mean(scores)
-std_dev = np.std(scores)
+mean_score = mean(scores)
+std_dev = stddev(scores, mean_score)
+
+num_bins = 9
+min_score, max_score = min(scores), max(scores)
+bin_width = (max_score - min_score) / num_bins
 
 print(f'Minimalna hodnota: {min(scores)} Maximalna hodnota: {max(scores)}')
 print(f"📌 Priemer skóre: {mean_score:.2f}, Smerodajná odchýlka: {std_dev:.2f}")
 
-# 🔢 Definovanie 9 binov (intervalov)
-bins = np.linspace(min(scores), max(scores), 9)  # 10 hraníc -> 9 intervalov
+# Vytvorenie binov ako intervalov
+bins = [min_score + i * bin_width for i in range(num_bins + 1)]
+histogram = {i: 0 for i in range(num_bins)}
 
-import math
 
+# Priradenie skóre hráčov do binov
+for score in scores:
+    for i in range(num_bins):
+        if bins[i] <= score < bins[i + 1]:  # Posledný interval zahŕňa max_score
+            histogram[i] += 1
+            break
 
-    
-# 🟢 Vytvorenie histogramu s 9 binmi
-hist_values, bin_edges = np.histogram(scores, bins=bins)
-# print(type(hist_values))
-# print(bin_edges)
-score = 0
-player_score_bin = None
-intervals = []
-for i in range(len(bin_edges) - 1):
-    intervals.append(f"{math.ceil(bin_edges[i])} - {math.floor(bin_edges[i+1])}")
-    if bin_edges[i] <= score <= bin_edges[i+1]:
-        player_score_bin = i
-
-print(intervals)
-print(player_score_bin)
-
-data = int_list = list(map(int, hist_values))
-print(type(data), data)
+# Prevod histogramu na zoznam hodnôt
+hist_values = list(histogram.values())
 
 # 🟡 Vygenerovanie Gaussovej krivky zoskalovanej podľa počtu hráčov
-x = np.linspace(min(scores), max(scores), 100)
-y = (len(scores) * np.diff(bins)[0]) * (1 / (std_dev * np.sqrt(2 * np.pi))) * np.exp(-0.5 * ((x - mean_score) / std_dev) ** 2)
+x = [min_score + i * (max_score - min_score) / 100 for i in range(101)]
+y = [len(scores) * bin_width * gaussian(x, mean_score, std_dev) for x in x]
+
+print(bins)
 
 # 🎨 Vykreslenie histogramu a Gaussovej krivky
 plt.figure(figsize=(10, 6))
-plt.bar(bin_edges[:-1], hist_values, width=np.diff(bins), alpha=0.6, color='g', edgecolor='black', label='Histogram (9 intervalov)')
+plt.bar(bins[:-1], hist_values, width=bin_width, alpha=0.6, color='g', edgecolor='black', label='Histogram (9 intervalov)')
 plt.plot(x, y, linewidth=2, color='r', label='Gaussova krivka')
 plt.title('Rozdelenie skóre hráčov do 9 intervalov a Gaussova krivka')
 plt.xlabel('Skóre')
 plt.ylabel('Počet hráčov')
-plt.xticks(bin_edges.round(2))  # Označenie hodnôt na X osi
+plt.xticks([round(b, 2) for b in bins])  # Zaokrúhlenie hodnôt na X osi
 plt.legend()
 plt.grid(True)
 plt.show()

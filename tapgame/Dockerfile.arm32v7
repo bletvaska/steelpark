@@ -1,11 +1,27 @@
-FROM arm32v7/python:3.13-slim
+# to build run:
+# docker buildx build --platform linux/arm/v7 --tag bletvaska/gaussgame-core --file Dockerfile.arm32v7 --push .
+FROM arm32v7/python:3.13-slim AS builder
+
+ARG PACKAGE="tapgame-py3-none-any.whl"
+
+# RUN apt update && apt install --yes gcc g++
+
+COPY dist/${PACKAGE} /wheels/
+
+RUN pip download /wheels/${PACKAGE} --dest /wheels/
+
+
+FROM arm32v7/python:3.13-slim AS final
+
+ARG PACKAGE="tapgame-py3-none-any.whl"
+
+# install packages
+WORKDIR /wheels
+COPY --from=builder /wheels /wheels
+RUN pip install --no-index --find-links=/wheels ${PACKAGE} && rm -rf /wheels
 
 RUN groupadd --system --gid 1000 pythonista \
     && adduser --no-create-home --uid 1000 --gid 1000 --disabled-password --gecos Pythonista pythonista
-
-COPY dist/tapgame-2025.1.1-py3-none-any.whl /tmp/wheels/
-
-RUN pip install /tmp/wheels/tapgame-2025.1.1-py3-none-any.whl
 
 USER pythonista
 WORKDIR /app
