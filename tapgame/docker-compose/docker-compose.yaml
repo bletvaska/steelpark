@@ -1,19 +1,19 @@
 services:
   core:
-    image: bletvaska/gaussgame-core
+    image: bletvaska/gaussgame-core:2025.2.1
 #    build: ..
     depends_on:
       - mosquitto
     restart: always
     environment:
       TAPGAME_BROKER: mosquitto
-      TAPGAME_DB_URI: sqlite:///app/db.sqlite
+      TAPGAME_DB_URI: sqlite:////app/db.sqlite
     volumes:
-      - db:/app
+      - ./app:/app
 
 
   bridge:
-    image: bletvaska/gaussgame-core
+    image: bletvaska/gaussgame-core:2025.2.1
     depends_on:
     - mosquitto
     restart: always
@@ -45,6 +45,6 @@ services:
       - ./mosquitto:/mosquitto/config:ro
 
 
-volumes:
-  db: {}
+# volumes:
+#   db: {}
   

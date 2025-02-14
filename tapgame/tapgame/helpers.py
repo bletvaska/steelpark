@@ -7,7 +7,7 @@ from loguru import logger
 from sqlmodel import Session, create_engine, select
 
 from .models.player import Player
-from .models.settings import Settings
+from .models.settings import get_settings
 
 
 m_adjectives = ['bublinkový', 'šikovný', 'lenivý', 'bystrý', 'chichotavý', 'srandovný', 'prskajúci', 'hrkajúci', 'lietajúci', 'hopsavý', 'vyškerený', 'okatý', 'pehatý', 'skákajúci']
@@ -41,7 +41,7 @@ def get_player_name() -> str:
 
 @cache
 def get_db_engine():
-    return create_engine(Settings().db_uri)
+    return create_engine(get_settings().db_uri)
 
 
 def get_top_players():
