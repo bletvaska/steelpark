@@ -3,7 +3,7 @@
 ## Building
 
 ```bash
-$ export TAPGAME_VERSION=2025.1.5
+$ export TAPGAME_VERSION=2025.2.1
 $ docker buildx build \
     --platform linux/arm/v7 \
     --tag "bletvaska/gaussgame-core:${TAPGAME_VERSION}" \

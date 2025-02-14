@@ -21,6 +21,8 @@ services:
       TAPGAME_BROKER: mosquitto
     devices:
     - /dev/gpiomem:/dev/gpiomem
+    volumes:
+    - /sys:/sys
     command: tapbridge
 
 

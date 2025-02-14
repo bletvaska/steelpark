@@ -8,6 +8,8 @@ ARG VERSION="2025.1.5"
 
 COPY dist/tapgame-${VERSION}-py3-none-any.whl /wheels/
 
+RUN apt update && apt install --yes gcc swig
+
 RUN pip download /wheels/tapgame-${VERSION}-py3-none-any.whl --dest /wheels/
 
 
