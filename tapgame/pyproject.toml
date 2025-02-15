@@ -1,6 +1,6 @@
 [project]
 name = "tapgame"
-version = "2025.2.1"
+version = "2025.2.3"
 description = "Tap Game for Kulturpark Košice"
 authors = [
     {name = "mirek",email = "mirek@cnl.sk"},
@@ -8,13 +8,13 @@ authors = [
     {name = "vlado"},
 ]
 readme = "README.md"
-requires-python = ">=3.13,<4.0"
+requires-python = ">=3.12,<4.0"
 dependencies = [
     "paho-mqtt (>=2.1.0,<3.0.0)",
     "pydantic-settings (>=2.7.1,<3.0.0)",
     "loguru (>=0.7.3,<0.8.0)",
     "sqlmodel (>=0.0.22,<0.0.23)",
-    "gpiozero (>=2.0.1,<3.0.0)"
+    # "gpiozero (>=2.0.1,<3.0.0)"
     # "numpy (>=2.2.2,<3.0.0)"
     # pigpio
     # lgpio

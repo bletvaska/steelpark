@@ -2,7 +2,7 @@
 # docker buildx build --platform linux/arm/v7 --tag bletvaska/gaussgame-core --file Dockerfile.arm32v7 --push .
 FROM arm32v7/python:3.13-slim AS builder
 
-ARG VERSION="2025.1.5"
+ARG VERSION
 
 # RUN apt update && apt install --yes gcc g++
 
@@ -15,7 +15,7 @@ RUN pip download /wheels/tapgame-${VERSION}-py3-none-any.whl --dest /wheels/
 
 FROM arm32v7/python:3.13-slim AS final
 
-ARG VERSION="2025.1.5"
+ARG VERSION
 ENV TAPGAME_VERSION=${VERSION}
 
 # install packages

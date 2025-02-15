@@ -1,6 +1,6 @@
 services:
   core:
-    image: bletvaska/gaussgame-core:2025.2.1
+    image: bletvaska/gaussgame-core:2025.2.3
 #    build: ..
     depends_on:
       - mosquitto
@@ -13,16 +13,17 @@ services:
 
 
   bridge:
-    image: bletvaska/gaussgame-core:2025.2.1
+    image: bletvaska/gaussgame-core:2025.2.3
     depends_on:
     - mosquitto
     restart: always
+    priviligede: true
+    user: root:root
     environment:
       TAPGAME_BROKER: mosquitto
     devices:
-    - /dev/gpiomem:/dev/gpiomem
-    volumes:
-    - /sys:/sys
+    - /dev/gpiomem
+    - /dev/gpiomem4
     command: tapbridge
 
 

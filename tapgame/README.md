@@ -1,5 +1,11 @@
 # The Game Controller
 
+## Issue
+
+* problem pri baleni obrazu pre ovladanie a pristup ku GPIO pinom
+* toto funguje ako tak: https://github.com/gpiozero/gpiozero/discussions/1117
+
+
 ## Building
 
 ```bash
