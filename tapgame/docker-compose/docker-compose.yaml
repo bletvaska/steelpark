@@ -1,7 +1,7 @@
 services:
   core:
     image: bletvaska/gaussgame-core:latest
-    pull_policy: allways
+    pull_policy: always
 #    build: ..
     depends_on:
       - mosquitto
@@ -16,7 +16,7 @@ services:
 
   bridge:
     image: bletvaska/gaussgame-core:latest
-    pull_policy: allways
+    pull_policy: always
     depends_on:
     - mosquitto
     restart: always
@@ -32,7 +32,7 @@ services:
 
   ui:
     image: dillir/gauss-frontend:latest
-    pull_policy: allways
+    pull_policy: always
     depends_on:
       - mosquitto
       - core
