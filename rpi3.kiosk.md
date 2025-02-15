@@ -41,7 +41,16 @@
    ```
    #!/usr/bin/env bash
 
-   URL="https://www.root.cz"
+   URL="https://localhost"
+
+   # wait for service
+   printf "Waiting for service to start...\n"
+   status_code=0
+   while [[ "${status_code}" != 200 ]]; do
+       status_code=$(curl --silent --output /dev/null -w "%{http_code}" "${URL}")
+       print "...still waiting...\n"
+       sleep 1
+   done
 
    xset -dpms     # disable DPMS (Energy Star) features.
    xset s off     # disable screen saver
@@ -65,6 +74,7 @@
         --noerrdialogs \
         --disable-infobars \
         --kiosk \
+        --incognito \
         --window-size="${width},${height}" --window-position=0,0 \
         "${URL}"
    ```
