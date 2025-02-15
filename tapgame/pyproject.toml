@@ -1,6 +1,6 @@
 [project]
 name = "tapgame"
-version = "2025.2.6"
+version = "2025.2.7"
 description = "Tap Game for Kulturpark Košice"
 authors = [
     {name = "mirek", email = "mirek@cnl.sk"},

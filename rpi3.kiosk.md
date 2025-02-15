@@ -75,6 +75,7 @@
         --disable-infobars \
         --kiosk \
         --incognito \
+        --hide-scrollbars \
         --window-size="${width},${height}" --window-position=0,0 \
         "${URL}"
    ```

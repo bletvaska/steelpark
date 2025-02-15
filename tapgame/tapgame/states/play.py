@@ -7,7 +7,7 @@ import paho.mqtt.client as mqtt
 from sqlmodel import Session
 
 from ..helpers import datetime_serializer, get_db_engine, get_player_name, get_top_players
-from ..models.settings import Settings
+from ..models.settings import get_settings
 from ..models.player import Player
 from .state import State
 from .inactive import Inactive
@@ -24,7 +24,8 @@ class Play(State):
         }
 
         self.context.mqtt_client.publish(
-            Settings().screen_topic, json.dumps(payload, ensure_ascii=False, default=datetime_serializer)
+            get_settings().screen_topic, 
+            json.dumps(payload, ensure_ascii=False, default=datetime_serializer)
         )
 
     def _on_tap(self, client: mqtt.Client, userdata, msg: mqtt.MQTTMessage):
@@ -39,18 +40,18 @@ class Play(State):
 
     def on_enter(self, *args, **kwargs):
         super().on_enter(*args, **kwargs)
-
-        self.context.mqtt_client.message_callback_add(f"{Settings().keyboard_topic}/event", self._on_tap)
-        self.countdown = Settings().gameplay_duration
+        
+        self.countdown = get_settings().gameplay_duration
         self.idle = 0
         self.context.player = Player(name=get_player_name(), score=0, dt=datetime.datetime.now(datetime.UTC))
         self.top_players = get_top_players()
 
+        self.context.mqtt_client.message_callback_add(f"{get_settings().keyboard_topic}/event", self._on_tap)
         self._publish()
 
     def exec(self):
         # game loop
-        while self.countdown > 0 and self.idle < Settings().idle_duration:
+        while self.countdown > 0 and self.idle < get_settings().idle_duration:
             self.countdown -= 1
             self.idle += 1
             logger.debug(f"{self.countdown} / {self.idle}")
@@ -70,4 +71,4 @@ class Play(State):
                 session.commit()
                 session.refresh(self.context.player)
 
-        self.context.mqtt_client.message_callback_remove(f"{Settings().keyboard_topic}/event")
+        self.context.mqtt_client.message_callback_remove(f"{get_settings().keyboard_topic}/event")
