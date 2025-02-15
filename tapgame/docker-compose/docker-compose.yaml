@@ -10,7 +10,7 @@ services:
       TAPGAME_DB_URI: sqlite:////app/db.sqlite
     volumes:
       - ./app:/app
-    command: [ "python3", "-m", "tapgame."]
+    command: [ "python3", "-m", "tapgame"]
 
 
   bridge:

@@ -47,4 +47,4 @@ USER pythonista
 WORKDIR /app
 VOLUME [ "/app"]
 
-CMD [ "python3", "-m", "tapgame" ]
+CMD [ "/usr/bin/python3", "-m", "tapgame" ]
