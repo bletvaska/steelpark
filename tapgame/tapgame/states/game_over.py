@@ -1,6 +1,6 @@
 import json
 from ..models.settings import Settings
-from ..helpers import countdown_timer, to_iso8601
+from ..helpers import countdown_timer, datetime_serializer
 from .results import Results
 from .state import State
 
@@ -13,16 +13,14 @@ class GameOver(State):
     name = "GAME OVER"
 
     def on_enter(self):
-        player = dict(self.context.player)
-        player['dt'] = to_iso8601(player['dt'])
-
         payload = {
             "name": self.name,
-            "player": player,
+            "player": dict(self.context.player),
         }
         
         self.context.mqtt_client.publish(
-            Settings().screen_topic, json.dumps(payload, ensure_ascii=False)
+            Settings().screen_topic, 
+            json.dumps(payload, ensure_ascii=False, default=datetime_serializer)
         )
 
     def exec(self):

@@ -16,7 +16,7 @@ class Settings(BaseSettings):
     error_view_duration: int = 30
     gameplay_duration: int = 60
     game_over_view_duration: int = 10
-    gauss_bins: int = 10
+    gauss_bins: int = 9
     db_uri: str = 'sqlite:///db.sqlite'
 
     @computed_field

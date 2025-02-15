@@ -15,11 +15,17 @@ m_nouns = ['slimáčik', 'veveričiak', 'krtko', 'oceánik', 'havko', 'kocúrik'
 f_adjectives = ['bublinková', 'šikovná', 'bystrá', 'lenivá', 'chichotavá', 'srandovná', 'prskajúca', 'hrkajúca', 'lietajúca', 'hopsavá', 'vyškerená', 'okatá', 'pehatá', 'skákajúca']
 f_nouns = ['húsenica', 'dážďovka', 'veverička', 'mačička', 'medvedica', 'myška', 'sedmokrácka', 'púpava', 'konvalinka', 'slaninka']
 
-def to_iso8601(dt=None)->str:
+def datetime_serializer(obj):
+    if isinstance(obj, datetime.datetime): 
+        return to_iso8601(obj)
+    raise TypeError("Type not serializable") 
+
+
+def to_iso8601(dt: datetime.datetime = None)->str:
     if dt is None:
         dt = datetime.datetime.now(datetime.UTC)
 
-    return f"{dt.replace(microsecond=0).isoformat()[:-6]}Z"
+    return f"{dt.replace(microsecond=0, tzinfo=datetime.UTC).isoformat()[:-6]}Z"
 
 
 def countdown_timer(duration: int):

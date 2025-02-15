@@ -5,8 +5,8 @@ from sqlmodel import Session, select
 from sqlalchemy.sql.functions import rank
 from sqlalchemy.sql import desc
 
-from ..helpers import countdown_timer, get_db_engine, get_top_players, to_iso8601
-from ..models.settings import Settings
+from ..helpers import countdown_timer, datetime_serializer, get_db_engine, get_top_players
+from ..models.settings import get_settings
 from ..models.player import Player
 from .state import State
 
@@ -16,18 +16,25 @@ class Results(State):
 
     def on_enter(self):
         player = dict(self.context.player)
-        player["dt"] = to_iso8601(player["dt"])
         player["rank"] = self._get_rank_of_player(player["id"])
-        
-        payload = {"name": self.name, "player": player, "table": get_top_players(), "chart": self._get_chart_data()}
 
-        self.context.mqtt_client.publish(Settings().screen_topic, json.dumps(payload, ensure_ascii=False))
+        payload = {
+            "name": self.name, 
+            "player": player, 
+            "table": get_top_players(), 
+            "chart": self._get_chart_data()
+        }
+
+        self.context.mqtt_client.publish(
+            get_settings().screen_topic, 
+            json.dumps(payload, ensure_ascii=False, default=datetime_serializer)
+        )
 
     def exec(self):
         """
         Shows the results for RESULTS_VIEW_DURATION period.
         """
-        countdown_timer(Settings().results_view_duration)
+        countdown_timer(get_settings().results_view_duration)
         from .start import Start
 
         self.context.state = Start(self.context)
@@ -48,11 +55,11 @@ class Results(State):
             return None
 
         # create bins
-        num_bins = Settings().gauss_bins
+        num_bins = get_settings().gauss_bins
         min_score, max_score = min(scores), max(scores)
         bin_width = (max_score - min_score) / num_bins
         bins = [min_score + i * bin_width for i in range(num_bins + 1)]
-        
+
         # create histogram based on player score
         histogram = [0 for i in range(num_bins)]
         for score in scores:
@@ -60,7 +67,7 @@ class Results(State):
                 if bins[i] <= score < bins[i + 1]:  # Posledný interval zahŕňa max_score
                     histogram[i] += 1
                     break
-        
+
         # find index of the bin for player
         player_score_bin = None
         labels = []
@@ -69,14 +76,8 @@ class Results(State):
             if bins[i] <= self.context.player.score <= bins[i + 1]:
                 player_score_bin = i
 
-        # print(self.context.player.score, player_score_bin)
-        # print(labels)
-        # print(histogram)
-
         return {
-            "labels": [
-                f"{math.ceil(bins[i])} - {math.floor(bins[i + 1])}" for i in range(len(bins) - 1)
-            ],
+            "labels": [f"{math.ceil(bins[i])} - {math.floor(bins[i + 1])}" for i in range(len(bins) - 1)],
             "data": histogram,
             "playerScoreBin": player_score_bin,
         }

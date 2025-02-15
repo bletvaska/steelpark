@@ -9,14 +9,12 @@ from pydantic import ValidationError
 from .models.player import Player
 from .models.settings import Settings
 from .states.start import Start
-from .states.results import Results
-from .states.play import Play
 
 
 class Context:
     def __init__(self):
         # prepare context variables
-        self.state = Play(self)
+        self.state = Start(self)
         self.player: Player = None
         self.table = []
         try:
@@ -57,6 +55,8 @@ class Context:
             self.mqtt_client.subscribe(f'{self.settings.keyboard_topic}/event')
             self.mqtt_client.loop_start()
 
+            logger.debug('Current Settings')
+            logger.debug(dict(self.settings))
             logger.info("Running main loop")
             while True:
                 state = self.state

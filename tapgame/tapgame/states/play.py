@@ -1,4 +1,4 @@
-from datetime import datetime
+import datetime
 import json
 from time import sleep
 
@@ -6,7 +6,7 @@ from loguru import logger
 import paho.mqtt.client as mqtt
 from sqlmodel import Session
 
-from ..helpers import get_db_engine, get_player_name, get_top_players, to_iso8601
+from ..helpers import datetime_serializer, get_db_engine, get_player_name, get_top_players
 from ..models.settings import Settings
 from ..models.player import Player
 from .state import State
@@ -18,18 +18,14 @@ class Play(State):
     name = "PLAY"
 
     def _publish(self):
-        player = dict(self.context.player)
-        player['dt'] = to_iso8601(player['dt'])
-
         payload = {
             "name": self.name,
-            "player": player,
+            "player": dict(self.context.player),
         }
-        
-        self.context.mqtt_client.publish(
-            Settings().screen_topic, json.dumps(payload, ensure_ascii=False)
-        )
 
+        self.context.mqtt_client.publish(
+            Settings().screen_topic, json.dumps(payload, ensure_ascii=False, default=datetime_serializer)
+        )
 
     def _on_tap(self, client: mqtt.Client, userdata, msg: mqtt.MQTTMessage):
         message = json.loads(msg.payload.decode("utf-8"))
@@ -41,18 +37,16 @@ class Play(State):
             logger.debug(f"Score: {self.context.player.score}")
             self._publish()
 
-
     def on_enter(self, *args, **kwargs):
         super().on_enter(*args, **kwargs)
 
         self.context.mqtt_client.message_callback_add(f"{Settings().keyboard_topic}/event", self._on_tap)
         self.countdown = Settings().gameplay_duration
         self.idle = 0
-        self.context.player = Player(name=get_player_name(), score=0, dt=datetime.now())
+        self.context.player = Player(name=get_player_name(), score=0, dt=datetime.datetime.now(datetime.UTC))
         self.top_players = get_top_players()
 
         self._publish()
-
 
     def exec(self):
         # game loop
@@ -67,7 +61,6 @@ class Play(State):
             self.context.state = GameOver(self.context)
         else:
             self.context.state = Inactive(self.context)
-
 
     def on_exit(self):
         if isinstance(self.context.state, GameOver):

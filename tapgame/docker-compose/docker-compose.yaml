@@ -1,6 +1,6 @@
 services:
   core:
-    image: bletvaska/gaussgame-core:2025.2.3
+    image: bletvaska/gaussgame-core:2025.2.5
 #    build: ..
     depends_on:
       - mosquitto
@@ -10,14 +10,15 @@ services:
       TAPGAME_DB_URI: sqlite:////app/db.sqlite
     volumes:
       - ./app:/app
+    command: [ "python3", "-m", "tapgame."]
 
 
   bridge:
-    image: bletvaska/gaussgame-core:2025.2.3
+    image: bletvaska/gaussgame-core:2025.2.5
     depends_on:
     - mosquitto
     restart: always
-    priviligede: true
+    privileged: true
     user: root:root
     environment:
       TAPGAME_BROKER: mosquitto
