@@ -1,11 +1,14 @@
 import json
 import math
+from time import sleep
 
+from loguru import logger
 from sqlmodel import Session, select
 from sqlalchemy.sql.functions import rank
 from sqlalchemy.sql import desc
+import paho.mqtt.client as mqtt
 
-from ..helpers import countdown_timer, datetime_serializer, get_db_engine, get_top_players
+from ..helpers import datetime_serializer, get_db_engine, get_top_players
 from ..models.settings import get_settings
 from ..models.player import Player
 from .state import State
@@ -13,6 +16,14 @@ from .state import State
 
 class Results(State):
     name = "RESULTS"
+
+    def _on_tap(self, client: mqtt.Client, userdata, msg: mqtt.MQTTMessage):
+        """
+        Change the rule pages on tap.
+        """
+        logger.debug("TAP")
+        from .start import Start
+        self.context.state = Start(self.context)
 
     def on_enter(self):
         player = dict(self.context.player)
@@ -30,14 +41,21 @@ class Results(State):
             json.dumps(payload, ensure_ascii=False, default=datetime_serializer)
         )
 
+        self.context.mqtt_client.message_callback_add(f"{get_settings().keyboard_topic}/event", self._on_tap)
+
     def exec(self):
         """
         Shows the results for RESULTS_VIEW_DURATION period.
         """
-        countdown_timer(get_settings().results_view_duration)
-        from .start import Start
-
-        self.context.state = Start(self.context)
+        
+        duration = 0.3
+        idle = 0
+        while self.context.state == self:
+            sleep(duration)
+            idle += duration
+            if idle >= get_settings().results_view_duration:
+                from .start import Start
+                self.context.state = Start(self.context)
 
     def _get_rank_of_player(self, id):
         with Session(get_db_engine()) as session:

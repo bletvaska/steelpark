@@ -29,14 +29,14 @@ class Play(State):
         )
 
     def _on_tap(self, client: mqtt.Client, userdata, msg: mqtt.MQTTMessage):
-        message = json.loads(msg.payload.decode("utf-8"))
-
         # on tap only
-        if message["name"] == "tap":
-            self.context.player.score += 1
-            self.idle = 0
-            logger.debug(f"Score: {self.context.player.score}")
-            self._publish()
+        # no need to check - no other type of message
+        # message = json.loads(msg.payload.decode("utf-8"))
+        #   if message["name"] == "tap":
+        self.context.player.score += 1
+        self.idle = 0
+        logger.debug(f"Score: {self.context.player.score}")
+        self._publish()
 
     def on_enter(self, *args, **kwargs):
         super().on_enter(*args, **kwargs)
