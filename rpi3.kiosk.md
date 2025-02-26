@@ -112,7 +112,7 @@
 
 ## Vychytávky
 
-1. Start htop na konzole 2
+1. Start `htop` na konzole 2
 
    Ulozit do suboru `/etc/systemd/system/htop.service`
 
@@ -138,6 +138,35 @@
    ```
 
    **Poznámka:** Podľa https://unix.stackexchange.com/questions/224992/where-do-i-put-my-systemd-unit-file treba `unit` uložiť do súboru `/usr/local/lib/systemd/system/htop.service`
+
+2. Start `mosquitto_sub` na konzole 3
+
+   Ulozit do suboru `/etc/systemd/system/mqtt_sub.service`
+
+   ```
+   [Unit]
+   Description=mosquitto_sub on tty3
+
+   [Service]
+   Type=simple
+   #ExecStartPre=/usr/bin/sleep 30
+   ExecStart=/usr/local/bin/mqtt_monitor.bash
+   Restart=on-failure
+   RestartSec=7s
+   StandardInput=tty
+   StandardOutput=tty
+   TTYPath=/dev/tty3
+
+   [Install]
+   WantedBy=multi-user.target
+   ```
+
+   A zapnut:
+
+   ```bash
+   $ sudo systemctl enable mqtt_sub.service
+   ```
+
 
 
 ## Riešenie pre X
@@ -267,6 +296,29 @@ $ systemctl --quiet set-default multi-user.target
    NODM_X_OPTIONS='-nolisten tcp -nocursor
    ```
 
+
+
+## Monitor cez tmux
+
+```bash
+#!/usr/bin/env bash
+
+# variables
+CMD1="docker compose --file /home/maker/kulturpark/tapgame/docker-compose/docker-compose.yaml logs --follow --tail 10"
+CMD2="dry"
+CMD3="htop"
+
+
+# run monitor with tmux
+tmux new-session -d -s monitor \; \
+	send-keys "${CMD1}" C-m \; \
+	new-window \; \
+	send-keys "${CMD2}" C-m  \; \
+    new-window \; \
+    send-keys "${CMD3}" C-m \; \
+	attach
+
+```
 
 ## Resources
 
