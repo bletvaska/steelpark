@@ -12,10 +12,8 @@
 2. Aktualizovať
 
     ```bash
+    # nie je uplne nutne urobit aj cely upgrade
     $ sudo apt update && sudo apt upgrade --yes
-    $ sudo apt install --no-install-recommends --yes \
-        xserver-xorg x11-xserver-utils xinit \
-        lightdm
     ```
 
 
@@ -35,7 +33,11 @@
 4. V prípade potreby nainštalovať chýbajúce balíky pre riešenie
 
     ```bash
-    $ sudo apt install --no-install-recommends --yes chromium-browser
+    $ sudo apt install --no-install-recommends --yes \
+        chromium-browser \
+        curl \
+        vim \
+        figlet lolcat
     ```
 
 
@@ -48,29 +50,53 @@
    hdmi_force_hotplug=1
    ```
 
+6. Vypnut neziaduce sluzby:
 
-## Spustenie prehravaca
+   ```bash
+   $ sudo systemctl disable cups
+   ```
+
+7. Audio cez HDMI
+
+   Ak je RPi pripojene k obrazovke cez HDMI a je mozne v cielovom zariadeni prehravat zvuk, tak staci pri zapnutom GUI v nastaveni hlasitosti prepnut na audio cez HDMI.
 
 
-1. vytvorit skript na prehravanie v `/usr/local/bin/kiosk.bash`:
+## Autostart
+
+Kedze novy Raspberry Pi OS pouziva labwc, staci upravit subor `autostart` pre pouzivatela v subore `~/.config/labwc/autostart`. Tento subor bude reprezentovat skript, ktory sa spusti.
+
+Konfiguracia pre vsetkych je ulozena v subore `/etc/xdg/labwc/autostart` a vyzera, ze sa pusti vzdy pred pouzivatelskou konfiguraciou. Takze tu pouzivatelsku treba adekvatne upravit a pripadne kill-nut nepotrebne procesy.
+
+V nasledujucich podkapitolach budu teda uvedene riesenia pre spustenie prehliadaca a pre spustenie video prehravaca.
+
+
+### Spustenie prehliadaca
+
+
+1. vytvorit autostart skript v `~/.config/labwc/autostart`:
 
     ```bash
     #!/usr/bin/env bash
 
     URL="http://localhost"
 
+    # close other services
+    pcmanfm --desktop-off
+    # killall -9 pcmanfm
+    killall -9 lwrespawn
+    killall -9 wf-panel-pi
+
     # wait for service
     printf "Waiting for service to start...\n"
+    lxterminal --command '( figlet -c -f slant "Gauss Game"; printf "Loading services for game to run. Please wait...\n") | lolcat --animate -d 30; sleep 5'
+
     status_code=0
     while [[ "${status_code}" != 200 ]]; do
-        status_code=$(curl --silent --output /dev/null -w "%{http_code}" "${URL}")
+        # status_code=$(curl --silent --output /dev/null -w "%{http_code}" "${URL}")
+        status_code=$(timeout 1 curl --fail --silent --output /dev/null "${URL}")
         printf "...still waiting...\n"
-        sleep 1
+        sleep 4
     done
-
-    killall -9 lwrespawn
-    killall -9 pcmanfm
-    killall -9 wf-panel-pi
 
     # Auto-detect resolution and store in variables
     width=$(cut -d, -f1 /sys/class/graphics/fb0/virtual_size)
@@ -80,34 +106,23 @@
     sed -i 's/"exited_cleanly":false/"exited_cleanly":true/' "${HOME}/.config/chromium/Local State"
     sed -i 's/"exited_cleanly":false/"exited_cleanly":true/; s/"exit_type":"[^"]\+"/"exit_type":"Normal"/' "${HOME}/.config/chromium/Default/Preferences"
 
+
     # start chromium in kiosk mode
     chromium-browser \
         --no-first-run \
         --start-maximized \
         --noerrdialogs \
         --disable-infobars \
-        --kiosk \
         --incognito \
-        --hide-scrollbars \
         --window-size="${width},${height}" --window-position=0,0 \
+        --kiosk \
+        --hide-scrollbars \
         "${URL}"
-    ```
 
-    nastavit prava na spustanie:
 
-    ```bash
-    $ chmod +x /usr/local/bin/kiosk.bash
-    ```
 
-2. vytovrit autostart subor  `~/.config/autostart/kiosk.desktop`:
+### Spustenie video prehravaca
 
-    ```desktop
-    [Desktop Entry]
-    Type=Application
-    Name=Kiosk Mode
-    Exec=/usr/local/bin/kiosk.bash
-    X-GNOME-Autostart-enabled=true
-    ```
 
 
 ## Vychytávky
@@ -219,7 +234,7 @@
 ## Misc a Cache
 
 
-1. Zmena wifi 
+1. Zmena wifi
 
    ```bash
    $ sudo raspi-config
@@ -230,7 +245,7 @@
 
 Autologin:
 
-Bud manualne pomocou 
+Bud manualne pomocou
 
 ```bash
 $ sudo raspi-config
@@ -325,3 +340,10 @@ tmux new-session -d -s monitor \; \
 * https://fleetstack.io/blog/raspberry-pi-kiosk-tutorial
 * https://gist.github.com/hrr/1a8d769255fdedc7f0b6a18e7fab2e2a
 * https://forums.raspberrypi.com/viewtopic.php?t=294014
+* navod ako spravit kiosk s wayfire - https://www.raspberrypi.com/tutorials/how-to-use-a-raspberry-pi-in-kiosk-mode/
+* navod ako spravit autostart s labwc (v prilozenom pdf na github-e sa nachadzaju navody pre dalsie moznosti) - https://forums.raspberrypi.com/viewtopic.php?t=379321
+  * pdf na github-e: https://github.com/thagrol/Guides/tree/main
+
+* zram navod (zrejme starsi) - https://pimylifeup.com/raspberry-pi-zram/
+  * dnes bude zrejme stacit nainstalovat balik `zram-tools` a nasledne upravit konfiguraciu
+
