@@ -240,6 +240,21 @@ V nasledujucich podkapitolach budu teda uvedene riesenia pre spustenie prehliada
    $ sudo raspi-config
    ```
 
+2. aktivovanie existujuceho wifi pripojenia
+
+   ak nahodou uz existuje wifi connection:
+
+   ```bash
+   $ nmcli conn show
+   ```
+
+   a treba ho len aktivovat/zmenit, tak z prikazoveho riadku:
+
+   ```bash
+   $ nmcli conn up CONN_NAME
+   ```
+
+
 
 6. Zabezpečiť autologin:
 
