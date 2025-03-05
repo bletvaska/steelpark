@@ -3,13 +3,35 @@
 
 ## System Setup
 
-1. Nainštalovať [Raspberry Pi OS](https://www.raspberrypi.com/software/operating-systems/) - základný, nie Lite
+1. Nainštalovať [Raspberry Pi OS](https://www.raspberrypi.com/software/operating-systems/)
 
-    * zapnúť ssh
-    * pripojiť sa na WiFi
+   * pouzit zakladny obraz - nie full ani lite
+   * na instalaciu pouzit RPi Imager a v nom
+      * zapnúť ssh
+      * nastavit pripojenie do WiFi
+      * rozlozenie klavesnice na us
 
 
-2. Aktualizovať
+2. zabezpecit vzdialeny pristup cez sluzbu [Raspberry Pi Connect](https://connect.raspberrypi.com/devices)
+
+   Najprv treba connect zapnut na zariadeni:
+
+   ```bash
+   $ rpi-connect on
+   ```
+
+   Potom treba zariadenie pridat do sluzby pomocou nasledujuceho prikazu:
+
+   ```bash
+   $ rpi-connect signin
+   ```
+
+   Po kliknuti na vygenerovany odkaz alebo prekopirovani vygenerovaneho odkazu do prehliadaca, v ktorom ste prihlaseni do sluzby RPi Connect, sa zariadenie prida do zoznamu vasich zariadeni.
+
+   Odteraz je mozne vsetko robit cez rozhranie sluzby RPi Connect.
+
+
+3. Aktualizovať
 
     ```bash
     # nie je uplne nutne urobit aj cely upgrade
@@ -17,10 +39,10 @@
     ```
 
 
-3. Nainštalovať docker
+4. Nainštalovať docker
 
     ```bash
-    $ curl -sSL https://get.docker.com/ | sudo sh
+    $ curl -sSL https://get.docker.com/ | sudo bash
     ```
 
     a pridat pouzivatela do skupiny docker:
@@ -29,19 +51,28 @@
     $ sudo usermod -aG docker $USER
     ```
 
+    restartovat
 
-4. V prípade potreby nainštalovať chýbajúce balíky pre riešenie
+    ```bash
+    $ sudo reboot
+    ```
+
+
+5. V prípade potreby nainštalovať chýbajúce balíky pre riešenie:
+
+   * `vim` - pre upravu konfiguracie
+   * `figlet` a `lolcat` - pre spustenie fancy zdrziavaca pri startovani GUI
+   * `curl` - pre skript cakajuci na spustenie potrebnych kontajnerov
 
     ```bash
     $ sudo apt install --no-install-recommends --yes \
-        chromium-browser \
         curl \
         vim \
         figlet lolcat
     ```
 
 
-5. Zabezpečiť, aby sa monitor, resp. HDMI výstup zapínal vždy (aj keď monitor nebude pripojený):
+6. Zabezpečiť, aby sa monitor, resp. HDMI výstup zapínal vždy (aj keď monitor nebude pripojený):
 
    V subore `/boot/firmware/config.txt`
 
@@ -50,15 +81,29 @@
    hdmi_force_hotplug=1
    ```
 
-6. Vypnut neziaduce sluzby:
+7. Vypnut neziaduce sluzby:
 
    ```bash
    $ sudo systemctl disable cups
    ```
 
-7. Audio cez HDMI
+8. Audio cez HDMI
 
    Ak je RPi pripojene k obrazovke cez HDMI a je mozne v cielovom zariadeni prehravat zvuk, tak staci pri zapnutom GUI v nastaveni hlasitosti prepnut na audio cez HDMI.
+
+   Inac napriklad cez `raspi-config` a menu `System Options > Audio` vybrat polozku HDMI.
+
+
+
+9. Externe tlacitko na vypnutie/zapnutie RPi
+
+   RPi ma zabudovanu podporu pre power tlacitko. Na jeho reprezentaciu treba mat momentary switch a pripojit ho na GPIO pin 3. Ak sa pripoji na iny, da sa sice prekonfigurovat a predvolene bude fungovat vypinanie, ale zapinanie fungovat nebude :-(
+
+   Pre pridanie podpory treba pridat do suboru `/boot/firmware/config.txt` na konci tento riadok:
+
+   ```
+   dtoverlay=gpio-shutdown
+   ```
 
 
 ## Autostart
