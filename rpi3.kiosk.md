@@ -62,7 +62,7 @@
 
    * `vim` - pre upravu konfiguracie
    * `figlet` a `lolcat` - pre spustenie fancy zdrziavaca pri startovani GUI
-   * `curl` - pre skript cakajuci na spustenie potrebnych kontajnerov
+   * `curl` - pre skript cakajuci na spustenie potrebnych kontajnerov (je uz nainstalovany)
 
     ```bash
     $ sudo apt install --no-install-recommends --yes \
@@ -81,18 +81,19 @@
    hdmi_force_hotplug=1
    ```
 
+
 7. Vypnut neziaduce sluzby:
 
    ```bash
    $ sudo systemctl disable cups
    ```
 
+
 8. Audio cez HDMI
 
    Ak je RPi pripojene k obrazovke cez HDMI a je mozne v cielovom zariadeni prehravat zvuk, tak staci pri zapnutom GUI v nastaveni hlasitosti prepnut na audio cez HDMI.
 
    Inac napriklad cez `raspi-config` a menu `System Options > Audio` vybrat polozku HDMI.
-
 
 
 9. Externe tlacitko na vypnutie/zapnutie RPi
@@ -103,6 +104,74 @@
 
    ```
    dtoverlay=gpio-shutdown
+   ```
+
+
+10. zvysenie vykonu pomocou ZRAM
+
+   nainstalovat balik zram-tools
+
+   ```bash
+   $ sudo apt install --yes zram-tools
+   ```
+
+   nastavit subor `/ect/default/zramswap` a upravit/pridat tieto riadky:
+
+   ```
+   ALGO=zstd
+   PERCENT=75
+   ```
+
+   restartovat sluzbu
+
+   ```bash
+   $ sudo systemctl restart zramswap
+   ```
+
+   a overit:
+
+   ```bash
+   $ zramctl
+   $ free -h
+   ```
+
+
+11. skrytie kurzoru mysi
+
+   kedze vo waylande nefunguje nejak specialne schovavanie kurzoru mysi, tak to urobime tak, ze mysou pohneme mimo obrazovku (vpravo dolu). na to, aby sa to udialo, nainstalujeme nastroje evemu z balika `evemu-tools`:
+
+   ```bash
+   $ sudo apt install --yes evemu-tools
+   ```
+
+   a nasledne zavolame:
+
+   ```bash
+   # kliknutie lavym tlacidlom mysi
+   $ evemu-event /dev/input/event3 --type EV_KEY --code BTN_LEFT --value 1 --sync
+   # uvolnenie laveho tlacidla mysi
+   $ evemu-event /dev/input/event3 --type EV_KEY --code BTN_LEFT --value 0 --sync
+   # posun doprava
+   $ evemu-event /dev/input/event3 --type EV_REL --code REL_X --value 9999 --sync
+   # posun dolu
+   $ evemu-event /dev/input/event3 --type EV_REL --code REL_Y --value 9999 --sync
+   ```
+
+
+12. nastavenie pevnej ip adresy na ethernetovy port v pripade, ak bude problem
+
+   najprv sa nastavi ip adresa na 10.20.30.1
+
+   ```bash
+   $ sudo nmcli connection modify Wired\ connection\ 1 \
+      ipv4.addresses 10.20.30.1/24 \
+      ipv4.method manual
+   ```
+
+   nasledne sa rozhranie zapne
+
+   ```bash
+   $ sudo nmcli connection up Wired\ connection\ 1
    ```
 
 
@@ -172,17 +241,41 @@ V nasledujucich podkapitolach budu teda uvedene riesenia pre spustenie prehliada
 
 ## Vychytávky
 
-1. Start `htop` na konzole 2
+### Monitor cez tmux
 
-   Ulozit do suboru `/etc/systemd/system/htop.service`
+1. najprv vyvorime skript, ktory budeme chciet spustat. `/usr/local/bin/monitor.bash`
+
+   ```bash
+   #!/usr/bin/env bash
+
+   # variables
+   CMD1="docker compose --file /home/maker/kulturpark/tapgame/docker-compose/docker-compose.yaml logs --follow --tail 10"
+   #CMD2="dry"
+   CMD2="htop"
+   CMD3='sleep 30; mosquitto_sub -h localhost -t kulturpark/tapgame/# -F "%t: %p"'
+
+
+   # run monitor with tmux
+   tmux new-session -d -s monitor \; \
+   	send-keys "${CMD1}" C-m \; \
+   	new-window \; \
+   	send-keys "${CMD2}" C-m  \; \
+       new-window \; \
+       send-keys "${CMD3}" C-m \; \
+   	attach
+   ```
+
+2. Start monitor na konzole 2
+
+   Ulozit do suboru `/etc/systemd/system/monitor.service`
 
    ```
    [Unit]
-   Description=htop on tty2
+   Description=monitor on tty2
 
    [Service]
    Type=simple
-   ExecStart=/usr/bin/htop
+   ExecStart=/usr/local/bin/monitor.bash
    StandardInput=tty
    StandardOutput=tty
    TTYPath=/dev/tty2
@@ -198,6 +291,7 @@ V nasledujucich podkapitolach budu teda uvedene riesenia pre spustenie prehliada
    ```
 
    **Poznámka:** Podľa https://unix.stackexchange.com/questions/224992/where-do-i-put-my-systemd-unit-file treba `unit` uložiť do súboru `/usr/local/lib/systemd/system/htop.service`
+
 
 2. Start `mosquitto_sub` na konzole 3
 
@@ -392,7 +486,6 @@ tmux new-session -d -s monitor \; \
     new-window \; \
     send-keys "${CMD3}" C-m \; \
 	attach
-
 ```
 
 ## Resources
