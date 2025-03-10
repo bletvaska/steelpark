@@ -1,7 +1,7 @@
 [project]
-name = "tapgame"
+name = "gaussgame"
 version = "2025.2.9"
-description = "Tap Game for Kulturpark Košice"
+description = "Tap Gauss Game for Kulturpark Košice"
 authors = [
     {name = "mirek", email = "mirek@cnl.sk"},
     {name = "juraj"},
@@ -41,4 +41,5 @@ indent-style = "space"
 
 
 [project.scripts]
-tapbridge = 'tapgame.bridge:main'
+gaussbridge = 'gaussgame.bridge:main'
+

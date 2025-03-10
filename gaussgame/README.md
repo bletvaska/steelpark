@@ -6,10 +6,17 @@
 * toto funguje ako tak: https://github.com/gpiozero/gpiozero/discussions/1117
 
 
-## Building
+## Building Package
 
 ```bash
-$ export TAPGAME_VERSION=2025.2.1
+$ poetry build
+```
+
+
+## Building Docker Image
+
+```bash
+$ export TAPGAME_VERSION=2025.2.9
 $ docker buildx build \
     --platform linux/arm/v7 \
     --tag "bletvaska/gaussgame-core:${TAPGAME_VERSION}" \

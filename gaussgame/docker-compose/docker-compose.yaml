@@ -11,7 +11,7 @@ services:
       TAPGAME_DB_URI: sqlite:////app/db.sqlite
     volumes:
       - db:/app
-    command: [ "python3", "-m", "tapgame"]
+    command: [ "python3", "-m", "gaussgame"]
 
 
   bridge:
@@ -27,7 +27,7 @@ services:
     devices:
     - /dev/gpiomem
     - /dev/gpiomem4
-    command: tapbridge
+    command: gaussbridge
 
 
   ui:
@@ -54,4 +54,4 @@ services:
 
 volumes:
   db: {}
-  
+
