@@ -9,8 +9,10 @@ services:
     environment:
       TAPGAME_BROKER: mosquitto
       TAPGAME_DB_URI: sqlite:////app/db.sqlite
+      PULSE_SERVER: unix:/run/user/1000/pulse/native
     volumes:
       - db:/app
+      - /run/user/1000/pulse:/run/user/1000/pulse
     command: [ "python3", "-m", "gaussgame"]
 
 
