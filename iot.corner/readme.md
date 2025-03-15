@@ -1,6 +1,5 @@
 # The IoT Corner Project
 
-Projekt pre Borisa a hlavne pre Kulturpark.
 
 
 ## Pristup na RPi

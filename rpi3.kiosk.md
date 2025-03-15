@@ -63,11 +63,13 @@
    * `vim` - pre upravu konfiguracie
    * `figlet` a `lolcat` - pre spustenie fancy zdrziavaca pri startovani GUI
    * `curl` - pre skript cakajuci na spustenie potrebnych kontajnerov (je uz nainstalovany)
+   * `btop` - pre zobrazenie stavu zariadenia (procesy, disk, pamat, siet, ...)
 
     ```bash
     $ sudo apt install --no-install-recommends --yes \
         curl \
         vim \
+        btop \
         figlet lolcat
     ```
 
@@ -103,6 +105,7 @@
    Pre pridanie podpory treba pridat do suboru `/boot/firmware/config.txt` na konci tento riadok:
 
    ```
+   # Enable shutdown button on GPIO pin 3
    dtoverlay=gpio-shutdown
    ```
 
@@ -115,7 +118,7 @@
    $ sudo apt install --yes zram-tools
    ```
 
-   nastavit subor `/ect/default/zramswap` a upravit/pridat tieto riadky:
+   nastavit subor `/etc/default/zramswap` a upravit/pridat tieto riadky:
 
    ```
    ALGO=zstd
@@ -144,7 +147,7 @@
    $ sudo apt install --yes evemu-tools
    ```
 
-   a nasledne zavolame:
+   a nasledne je mozne pouzit nasledujuce riadky podla potreby:
 
    ```bash
    # kliknutie lavym tlacidlom mysi
@@ -175,6 +178,26 @@
    ```
 
 
+13. nastavenie wifi pripojenia cieloveho umiestnenia
+
+   aby sme nemuseli konfigurovat wifi na mieste, mozeme sa pripravit dopredu a konfiguraciu pripojenia vytvorit dopredu. to urobime tymto prikazom:
+
+   ```bash
+   $ nmcli connection add type wifi \
+     con-name "CONN_NAME" \
+     ifname wlan0 \
+     ssid "SSID" \
+     wifi-sec.key-mgmt wpa-psk \
+     wifi-sec.psk "PASSWORD"
+   ```
+
+   **Poznámka:** Spojenie po vytvoreni sa vola `preconfigured`. Ak ho chcete premenovat na nazov aktualnej siete, tak nasledujucim prikazom:
+
+   ```bash
+   $ sudo nmcli connection modify "preconfigured" connection.id "WIFISSID"
+   ```
+
+
 ## Autostart
 
 Kedze novy Raspberry Pi OS pouziva labwc, staci upravit subor `autostart` pre pouzivatela v subore `~/.config/labwc/autostart`. Tento subor bude reprezentovat skript, ktory sa spusti.
@@ -195,9 +218,10 @@ V nasledujucich podkapitolach budu teda uvedene riesenia pre spustenie prehliada
     URL="http://localhost"
 
     # close other services
-    pcmanfm --desktop-off
-    # killall -9 pcmanfm
+    # watchdog for running apps
     killall -9 lwrespawn
+    # turns off pcmanfm for desktop management
+    pcmanfm --desktop-off
     killall -9 wf-panel-pi
 
     # wait for service
@@ -237,6 +261,24 @@ V nasledujucich podkapitolach budu teda uvedene riesenia pre spustenie prehliada
 
 ### Spustenie video prehravaca
 
+1. vytvorit autostart skript v `~/.config/labwc/autostart`:
+
+   ```bash
+   #!/usr/bin/env bash
+
+   # close other services
+   killall -9 lwrespawn
+   pcmanfm --desktop-off
+   # killall -9 pcmanfm
+   killall -9 wf-panel-pi
+
+   cvlc "${HOME}/Videos/"* \
+       --fullscreen \
+       --loop \
+       --no-osd \
+       --no-audio \
+       --no-mouse-events
+   ```
 
 
 ## Vychytávky
