@@ -28,7 +28,7 @@ class Context:
         self.mqtt_client = self._init_mqtt_client()
 
     def _on_message(self, client: mqtt.Client, userdata, msg: mqtt.MQTTMessage):
-        logger.warning(f'Ingoring message: {msg.topic}: {msg.payload}')
+        logger.warning(f'Ignoring message: {msg.topic}: {msg.payload}')
 
 
     def _init_mqtt_client(self):

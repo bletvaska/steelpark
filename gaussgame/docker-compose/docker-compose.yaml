@@ -10,10 +10,17 @@ services:
       TAPGAME_BROKER: mosquitto
       TAPGAME_DB_URI: sqlite:////app/db.sqlite
       PULSE_SERVER: unix:/run/user/1000/pulse/native
+      TZ: Europe/Bratislava
     volumes:
       - db:/app
       - /run/user/1000/pulse:/run/user/1000/pulse
     command: [ "python3", "-m", "gaussgame"]
+    healthcheck:
+      test: mosquitto_sub -h localhost -t kulturpark/tapgame/backend/status -C 1 | jq --exit-status '.status == "online"' > /dev/null || exit 1
+      interval: 10s
+      timeout: 3s
+      retries: 3
+      start_period: 120s
 
 
   bridge:
@@ -26,6 +33,7 @@ services:
     user: root:root
     environment:
       TAPGAME_BROKER: mosquitto
+      TZ: Europe/Bratislava
     devices:
     - /dev/gpiomem
     - /dev/gpiomem4
@@ -41,6 +49,8 @@ services:
     restart: always
     ports:
       - 80:80
+    environment:
+      TZ: Europe/Bratislava
 
 
   mosquitto:
@@ -52,6 +62,8 @@ services:
     - 1883:1883
     volumes:
       - ./mosquitto:/mosquitto/config:ro
+    environment:
+      TZ: Europe/Bratislava
 
 
 volumes:
