@@ -20,7 +20,12 @@ class Play(State):
     def _publish(self):
         payload = {
             "name": self.name,
-            "player": dict(self.context.player),
+            # "player": dict(self.context.player),
+            'player': {
+                'name': self.player,
+                'score': self.score,
+                'dt': self.start.isoformat(),
+            }
         }
 
         self.context.mqtt_client.publish(
@@ -33,9 +38,9 @@ class Play(State):
         # no need to check - no other type of message
         # message = json.loads(msg.payload.decode("utf-8"))
         #   if message["name"] == "tap":
-        self.context.player.score += 1
+        self.score += 1
         self.idle = 0
-        logger.debug(f"Score: {self.context.player.score}")
+        logger.debug(f"Score: {self.score}")
         self._publish()
 
     def on_enter(self, *args, **kwargs):
@@ -43,11 +48,16 @@ class Play(State):
         
         self.countdown = get_settings().gameplay_duration
         self.idle = 0
-        self.context.player = Player(name=get_player_name(), score=0, dt=datetime.datetime.now(datetime.UTC))
         self.top_players = get_top_players()
+        
+        # create player 
+        self.player = get_player_name()
+        self.score = 0
+        self.start = datetime.datetime.now(datetime.UTC)
+        # self.context.player = Player(name=get_player_name(), score=0, dt=datetime.datetime.now(datetime.UTC))
 
-        self.context.mqtt_client.message_callback_add(f"{get_settings().keyboard_topic}/event", self._on_tap)
         self._publish()
+        self.context.mqtt_client.message_callback_add(f"{get_settings().keyboard_topic}/event", self._on_tap)
 
     def exec(self):
         # game loop
@@ -65,10 +75,12 @@ class Play(State):
 
     def on_exit(self):
         if isinstance(self.context.state, GameOver):
+            player = Player(name=self.player, score=self.score, dt=self.start)
             # save player to db
             with Session(get_db_engine()) as session:
-                session.add(self.context.player)
+                session.add(player)
                 session.commit()
-                session.refresh(self.context.player)
+                session.refresh(player)
+                self.context.player = player
 
         self.context.mqtt_client.message_callback_remove(f"{get_settings().keyboard_topic}/event")
