@@ -7,13 +7,13 @@ services:
       - mosquitto
     restart: always
     environment:
-      TAPGAME_BROKER: mosquitto
-      TAPGAME_DB_URI: sqlite:////app/db.sqlite
-      PULSE_SERVER: unix:/run/user/1000/pulse/native
+      GAUSS_BROKER: mosquitto
+      GAUSS_DB_URI: sqlite:////app/db.sqlite
+      # PULSE_SERVER: unix:/run/user/1000/pulse/native
       TZ: Europe/Bratislava
     volumes:
       - db:/app
-      - /run/user/1000/pulse:/run/user/1000/pulse
+      # - /run/user/1000/pulse:/run/user/1000/pulse
     command: [ "python3", "-m", "gaussgame"]
     healthcheck:
       test: mosquitto_sub -h mosquitto -t kulturpark/tapgame/backend/status -C 1 | jq --exit-status '.status == "online"' > /dev/null || exit 1
@@ -32,7 +32,8 @@ services:
     privileged: true
     user: root:root
     environment:
-      TAPGAME_BROKER: mosquitto
+      GAUSS_BROKER: mosquitto
+      GAUSS_INPUT_PIN: 11
       TZ: Europe/Bratislava
     devices:
     - /dev/gpiomem

@@ -18,6 +18,7 @@ class Settings(BaseSettings):
     game_over_view_duration: int = 10
     gauss_bins: int = 9
     db_uri: str = 'sqlite:///db.sqlite'
+    input_pin: int = 4
 
     @computed_field
     @property
@@ -45,7 +46,7 @@ class Settings(BaseSettings):
         return f'{self.topic_prefix}/bridge'
 
     model_config = SettingsConfigDict(
-        env_prefix='TAPGAME_',
+        env_prefix='GAUSS_',
         env_file_encoding='utf-8',
         env_file='.env',
         extra='allow',

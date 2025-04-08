@@ -10,7 +10,7 @@ from loguru import logger
 from .models.settings import get_settings
 
 
-INPUT_PIN = 4
+# INPUT_PIN = 4
 client = mqtt.Client(mqtt.CallbackAPIVersion.VERSION2)
 settings = get_settings()
 
@@ -36,7 +36,7 @@ def main():
     logger.info('Initializing')
     init_mqtt_client()
 
-    button = Button(INPUT_PIN)
+    button = Button(settings.input_pin)
     button.when_pressed = on_press
 
     client.connect(settings.broker, settings.port, 60)

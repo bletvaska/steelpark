@@ -1,6 +1,6 @@
 [project]
 name = "gaussgame"
-version = "2025.4.1"
+version = "2025.4.2"
 description = "Tap Gauss Game for Kulturpark Košice"
 authors = [
     {name = "mirek", email = "mirek@cnl.sk"},

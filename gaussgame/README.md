@@ -16,17 +16,18 @@ $ poetry build
 ## Building Docker Image
 
 ```bash
-$ export TAPGAME_VERSION=2025.4.1
+$ export GAUSSGAME_VERSION=2025.4.2
 $ docker buildx build \
     --platform linux/arm/v7 \
-    --tag "bletvaska/gaussgame-core:${TAPGAME_VERSION}" \
+    --tag "bletvaska/gaussgame-core:${GAUSSGAME_VERSION}" \
     --tag "bletvaska/gaussgame-core:latest" \
     --file Dockerfile.arm32v7 \
     --push \
-    --build-arg "VERSION=${TAPGAME_VERSION}" \
+    --build-arg "VERSION=${GAUSSGAME_VERSION}" \
     .
+$ docker image tag bletvaska/gaussgame-core:${GAUSSGAME_VERSION} bletvaska/gaussgame-core:2025 
+$ docker image tag bletvaska/gaussgame-core:${GAUSSGAME_VERSION} bletvaska/gaussgame-core:2025.4
 ```
-
 
 
 # SPSE Presov
