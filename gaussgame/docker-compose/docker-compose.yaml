@@ -29,12 +29,12 @@ services:
     depends_on:
     - mosquitto
     restart: always
-    privileged: true
-    user: root:root
     environment:
       GAUSS_BROKER: mosquitto
       GAUSS_INPUT_PIN: 11
       TZ: Europe/Bratislava
+    privileged: true
+    user: root:root
     devices:
     - /dev/gpiomem
     - /dev/gpiomem4
