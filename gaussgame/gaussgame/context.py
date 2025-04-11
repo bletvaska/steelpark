@@ -32,7 +32,7 @@ class Context:
 
 
     def _init_mqtt_client(self):
-        client = mqtt.Client(mqtt.CallbackAPIVersion.VERSION2)
+        client = mqtt.Client(mqtt.CallbackAPIVersion.VERSION2, client_id="core")
         client.username_pw_set(self.settings.user, self.settings.password)
         client.will_set(
             f"{self.settings.backend_topic}/status",

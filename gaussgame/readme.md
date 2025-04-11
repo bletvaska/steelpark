@@ -16,11 +16,13 @@ $ poetry build
 ## Building Docker Image
 
 ```bash
-$ export GAUSSGAME_VERSION=2025.4.2
+$ export GAUSSGAME_VERSION=2025.4.5
 $ docker buildx build \
     --platform linux/arm/v7 \
-    --tag "bletvaska/gaussgame-core:${GAUSSGAME_VERSION}" \
     --tag "bletvaska/gaussgame-core:latest" \
+    --tag "bletvaska/gaussgame-core:2025" \
+    --tag "bletvaska/gaussgame-core:2025.4" \
+    --tag "bletvaska/gaussgame-core:${GAUSSGAME_VERSION}" \
     --file Dockerfile.arm32v7 \
     --push \
     --build-arg "VERSION=${GAUSSGAME_VERSION}" \

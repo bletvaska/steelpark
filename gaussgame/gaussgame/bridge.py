@@ -11,7 +11,7 @@ from .models.settings import get_settings
 
 
 # INPUT_PIN = 4
-client = mqtt.Client(mqtt.CallbackAPIVersion.VERSION2)
+client = mqtt.Client(mqtt.CallbackAPIVersion.VERSION2, client_id="bridge")
 settings = get_settings()
 
 

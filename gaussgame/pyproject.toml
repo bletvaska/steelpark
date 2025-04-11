@@ -1,13 +1,13 @@
 [project]
 name = "gaussgame"
-version = "2025.4.2"
+version = "2025.4.5"
 description = "Tap Gauss Game for Kulturpark Košice"
 authors = [
     {name = "mirek", email = "mirek@cnl.sk"},
     {name = "juraj"},
     {name = "vlado"},
 ]
-readme = "README.md"
+readme = "readme.md"
 requires-python = ">=3.12,<4.0"
 dependencies = [
     "paho-mqtt (>=2.1.0,<3.0.0)",
