@@ -9,7 +9,7 @@ class Settings(BaseSettings):
     port: int = 1883
     user: str | None = None
     password: str | None = None
-    topic_prefix: str = 'kulturpark/tapgame'
+    topic_prefix: str = 'kulturpark/gauss'
     idle_duration: int = 20
     inactive_view_duration: int = 5
     results_view_duration: int = 20
