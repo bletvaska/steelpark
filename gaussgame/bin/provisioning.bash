@@ -88,7 +88,8 @@ function main(){
     cp autostart.bash /home/maker/.config/labwc/autostart
 
     # reboot
-    info "Rebooting system"
+    info "Rebooting system in 10s"
+    sleep 10
     reboot
 }
 
