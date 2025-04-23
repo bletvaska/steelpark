@@ -70,7 +70,8 @@
         curl \
         vim \
         btop \
-        figlet lolcat
+        figlet \
+        lolcat
     ```
 
 
@@ -217,16 +218,20 @@ V nasledujucich podkapitolach budu teda uvedene riesenia pre spustenie prehliada
 
     URL="http://localhost"
 
+    # move mouse cursor out of the screen
+    evemu-event /dev/input/event0 --type EV_REL --code REL_X --value 9999 --sync
+    evemu-event /dev/input/event0 --type EV_REL --code REL_Y --value 9999 --sync
+
     # close other services
-    # watchdog for running apps
-    killall -9 lwrespawn
     # turns off pcmanfm for desktop management
     pcmanfm --desktop-off
+    # watchdog for running apps
+    killall -9 lwrespawn
     killall -9 wf-panel-pi
 
     # wait for service
     printf "Waiting for service to start...\n"
-    lxterminal --command '( figlet -c -f slant "Gauss Game"; printf "Loading services for game to run. Please wait...\n") | lolcat --animate -d 30; sleep 5'
+    lxterminal --command '(figlet -c -f slant "Gauss Game"; printf "Loading services for game to run. Please wait...\n") | lolcat --animate -d 30; sleep 5'
 
     status_code=0
     while [[ "${status_code}" != 200 ]]; do
