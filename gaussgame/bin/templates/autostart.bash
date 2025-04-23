@@ -19,7 +19,7 @@ function main(){
     printf "Waiting for service to start...\n"
     lxterminal --command '(figlet -c -f slant "Gauss Game"; printf "Loading services for game to run. Please wait...\n") | lolcat --animate -d 30; sleep 5'
 
-    status_code=1
+    local status_code=1
     while [[ "${status_code}" != 0 ]]; do
         # status_code=$(curl --silent --output /dev/null -w "%{http_code}" "${URL}")
         status_code=$(timeout 1 curl --fail --silent --output /dev/null "${URL}")
@@ -28,8 +28,8 @@ function main(){
     done
 
     # Auto-detect resolution and store in variables
-    width=$(cut -d, -f1 /sys/class/graphics/fb0/virtual_size)
-    height=$(cut -d, -f2 /sys/class/graphics/fb0/virtual_size)
+    local width=$(cut -d, -f1 /sys/class/graphics/fb0/virtual_size)
+    local height=$(cut -d, -f2 /sys/class/graphics/fb0/virtual_size)
 
     # cleanup chromium
     sed -i 's/"exited_cleanly":false/"exited_cleanly":true/' "${HOME}/.config/chromium/Local State"
