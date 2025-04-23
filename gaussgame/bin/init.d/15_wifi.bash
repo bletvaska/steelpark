@@ -1,0 +1,40 @@
+#!/usr/bin/env bash
+
+set -o errexit
+set -o pipefail
+set -o nounset
+
+source "lib/logging.bash"
+source "lib/helpers.bash"
+
+
+function main() {
+    info "Setting up WiFi Connection"
+
+    local ssid=$(get_secret "wifi.ssid")
+    local password=$(get_secret "wifi.password")
+
+    # delete existing WiFi network, if exist
+    if [[ $(nmcli connection show) =~ "${CONN_NAME} " ]]; then
+        info "Deleting existing connection '${CONN_NAME}'"
+        nmcli connection delete "${CONN_NAME}"
+    fi
+
+    # if nmcli connection delete "${CONN_NAME}" 2> /dev/null; then
+    #     info "Deleting existing network '${CONN_NAME}'"
+    # fi
+
+    nmcli connection add type wifi \
+        con-name "${WIFI_CONN_NAME:-conname}" \
+        ifname wlan0 \
+        ssid "${WIFI_SSID:-ssid}" \
+        wifi-sec.key-mgmt wpa-psk \
+        wifi-sec.psk "${WIFI_PASSWORD:-password}"
+
+    nmcli connection modify "preconfigured" connection.id "${WIFI_SSID:-ssid}"
+}
+
+
+if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
+    main "$@"
+fi

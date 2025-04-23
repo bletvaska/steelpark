@@ -12,7 +12,7 @@ function is_folder_empty() {
 function die() {
     local message="${1}"
 
-    printf "%s\n" "${message}" >&2
+    error "${message}"
     exit 1
 }
 

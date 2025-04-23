@@ -8,14 +8,19 @@ set -o nounset
 source lib/logging.bash
 source lib/helpers.bash
 
-global WIFI_SSID=""
-global WIFI_PASSWORD=""
-global WIFI_CONN_NAME=""
-global IP_ADDR="10.20.30.1"
-global HOSTNAME="gauss"
+# load environment variables from .env file
+if [[ ! -f ".env" ]]; then
+    die "No .env file found. Please create a .env file with the required variables."
+fi
 
+set -o allexport
+source .env
+set +o allexport
 
 function main(){
+    printf "${WIFI_SSID}"
+    exit 0
+
     # Check if the script is run as root
     if [ "$EUID" -ne 0 ]; then
         die "This script must be run as root"
@@ -43,13 +48,13 @@ function main(){
 
     # turn on rpi-connect
     info "Turning on rpi-connect"
-    rpi-connect on
-    rpi-connect signin
+    sudo --user "${USER}" rpi-connect on
+    sudo --user "${USER}" rpi-connect signin
 
     # install docker
     info "Installing docker"
     curl -sSL https://get.docker.com/ | bash
-    usermod -aG docker $USER
+    usermod -aG docker "${USER:-pi}"
 
     # modify raspberry
     info "Modifying Raspberry Pi"
@@ -65,19 +70,19 @@ function main(){
     # set networking
     info "Setting up additional networking"
     nmcli connection modify "Wired connection 1" \
-      ipv4.addresses "${IP_ADDR}/24" \
+      ipv4.addresses "${IP_ADDR:-10.0.0.1}/24" \
       ipv4.method manual
     nmcli connection up "Wired connection 1"
 
     nmcli connection add type wifi \
-        con-name "${WIFI_CONN_NAME}" \
+        con-name "${WIFI_CONN_NAME:-conname}" \
         ifname wlan0 \
-        ssid "${WIFI_SSID}" \
+        ssid "${WIFI_SSID:-ssid}" \
         wifi-sec.key-mgmt wpa-psk \
-        wifi-sec.psk "${WIFI_PASSWORD}"
-    nmcli connection modify "preconfigured" connection.id "${WIFI_SSID}"
+        wifi-sec.psk "${WIFI_PASSWORD:-password}"
+    nmcli connection modify "preconfigured" connection.id "${WIFI_SSID:-ssid}"
 
-    hostnamectl hostname "${HOSTNAME}"
+    hostnamectl hostname "${HOSTNAME:-pikiosk}"
 
     # set autostart script
     cp autostart.bash /home/maker/.config/labwc/autostart
