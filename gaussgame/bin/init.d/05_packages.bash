@@ -11,7 +11,7 @@ function main() {
     info "Update system and Install Additional Packages"
 
     # update system
-    sudo apt update && sudo apt upgrade --yes
+    apt update && sudo apt upgrade --yes
 
     # install additional packages
     info "Installing packages"
