@@ -28,7 +28,7 @@ function main() {
         wifi-sec.key-mgmt wpa-psk \
         wifi-sec.psk "${WIFI_PASSWORD:-password}"
 
-    nmcli connection modify "preconfigured" connection.id "${WIFI_SSID:-ssid}"
+    # nmcli connection modify "preconfigured" connection.id "${WIFI_SSID:-ssid}"
 }
 
 
