@@ -4,7 +4,8 @@ set -o errexit
 set -o pipefail
 set -o nounset
 
-source "/app/lib/logging.bash"
+source "lib/logging.bash"
+source "lib/helpers.bash"
 
 # TODO: check handling of SIGINT
 function on_sigint() {
@@ -13,24 +14,21 @@ function on_sigint() {
 }
 
 function main() {
+    # Check if the script is run as root
+    if [ "$EUID" -ne 0 ]; then
+        die "This script must be run as root"
+    fi
+
+    local scripts=$(ls init.d/*.bash 2> /dev/null)
+
     # check if config file exists as parameter
-    if [[ $# -eq 0 ]]; then
-        fatal "No config file provided. Exiting."
-        exit 1
+    if [[ $# -gt 0 ]]; then
+        scripts="${@}"
     fi
     
-    local config_file="${1}"
-    if [[ ! -f "${config_file}" ]]; then
-        fatal "Config file does not exist. Exiting."
-        exit 1
-    fi
-    
-    # check if config file is empty
-
-
     # run all the provisioning scripts
-    for file in init.d/*.bash; do
-        bash "${file}"
+    for file in $scripts; do
+        bash "init.d/${file}"
     done
 }
 
