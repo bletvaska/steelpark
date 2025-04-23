@@ -11,9 +11,6 @@ source "lib/helpers.bash"
 function main() {
     info "Setting up WiFi Connection"
 
-    local ssid=$(get_secret "wifi.ssid")
-    local password=$(get_secret "wifi.password")
-
     # delete existing WiFi network, if exist
     if [[ $(nmcli connection show) =~ "${WIFI_CONN_NAME} " ]]; then
         info "Deleting existing connection '${WIFI_CONN_NAME}'"
