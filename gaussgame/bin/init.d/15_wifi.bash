@@ -15,9 +15,9 @@ function main() {
     local password=$(get_secret "wifi.password")
 
     # delete existing WiFi network, if exist
-    if [[ $(nmcli connection show) =~ "${CONN_NAME} " ]]; then
-        info "Deleting existing connection '${CONN_NAME}'"
-        nmcli connection delete "${CONN_NAME}"
+    if [[ $(nmcli connection show) =~ "${WIFI_CONN_NAME} " ]]; then
+        info "Deleting existing connection '${WIFI_CONN_NAME}'"
+        nmcli connection delete "${WIFI_CONN_NAME}"
     fi
 
     # if nmcli connection delete "${CONN_NAME}" 2> /dev/null; then
