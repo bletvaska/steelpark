@@ -24,6 +24,15 @@ function main() {
         tmux \
         vim \
         zram-tools
+
+    info "Deleting packages"
+    apt remove --yes \
+        cups \
+        firefox
+
+    # clean up
+    info "Cleaning up"
+    apt autoremove --yes
 }
 
 if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
