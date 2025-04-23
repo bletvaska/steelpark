@@ -10,9 +10,13 @@ source "lib/helpers.bash"
 
 function main() {
     info "Installing docker"
-    
-    curl -sSL https://get.docker.com/ | bash
-    usermod -aG docker "${USER:-pi}"
+
+    if [[ ! -f /usr/bin/docker ]]; then
+        curl -sSL https://get.docker.com/ | bash
+        usermod -aG docker "${USER:-pi}"
+    else
+        info "Docker already installed"
+    fi
 }
 
 
