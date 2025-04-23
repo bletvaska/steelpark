@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-global URL="http://localhost"
+readonly URL="http://localhost"
 
 
 function main(){
@@ -19,8 +19,8 @@ function main(){
     printf "Waiting for service to start...\n"
     lxterminal --command '(figlet -c -f slant "Gauss Game"; printf "Loading services for game to run. Please wait...\n") | lolcat --animate -d 30; sleep 5'
 
-    status_code=0
-    while [[ "${status_code}" != 200 ]]; do
+    status_code=1
+    while [[ "${status_code}" != 0 ]]; do
         # status_code=$(curl --silent --output /dev/null -w "%{http_code}" "${URL}")
         status_code=$(timeout 1 curl --fail --silent --output /dev/null "${URL}")
         printf "...still waiting...\n"

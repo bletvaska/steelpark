@@ -85,7 +85,7 @@ function main(){
     hostnamectl hostname "${HOSTNAME:-pikiosk}"
 
     # set autostart script
-    cp autostart.bash /home/maker/.config/labwc/autostart
+    cp autostart.bash /home/${USER}/.config/labwc/autostart
 
     # reboot
     info "Rebooting system in 10s"
