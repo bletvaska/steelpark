@@ -27,7 +27,7 @@ function main() {
 
     info "Deleting packages"
     apt remove --yes \
-        cups \
+        cups* \
         firefox
 
     # clean up
