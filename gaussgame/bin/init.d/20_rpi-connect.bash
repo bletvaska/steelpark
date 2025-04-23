@@ -11,8 +11,7 @@ source "lib/helpers.bash"
 function main() {
     info "Setting up RPi Connect"
     
-    sudo --user "${USER}" rpi-connect status
-    if [[ $? -eq 1 ]]; then
+    if [[ $(sudo --user "${USER}" rpi-connect status) -eq 1 ]]; then
         info "Enabling and Signing"
         sudo --user "${USER}" rpi-connect on
         sudo --user "${USER}" rpi-connect signin
