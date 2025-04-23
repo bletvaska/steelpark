@@ -12,10 +12,12 @@ function main() {
     info "Setting up RPi Connect"
     
     sudo --user "${USER}" rpi-connect status
-    if [[ $? -ne 0 ]]; then
-        info "Installing rpi-connect"
+    if [[ $? -eq 1 ]]; then
+        info "Enabling and Signing"
         sudo --user "${USER}" rpi-connect on
         sudo --user "${USER}" rpi-connect signin
+    else
+        info "RPi Connect Already Enabled"
     fi
 }
 

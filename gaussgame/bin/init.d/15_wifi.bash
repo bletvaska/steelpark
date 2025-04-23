@@ -21,6 +21,7 @@ function main() {
     #     info "Deleting existing network '${CONN_NAME}'"
     # fi
 
+    info "Creating new WiFi connection '${WIFI_CONN_NAME:-conname}'"
     nmcli connection add type wifi \
         con-name "${WIFI_CONN_NAME:-conname}" \
         ifname wlan0 \

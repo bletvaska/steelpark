@@ -9,6 +9,7 @@ source "lib/helpers.bash"
 
 function main() {
     info "Update system and Install Additional Packages"
+    return
 
     # update system
     apt update && sudo apt upgrade --yes
