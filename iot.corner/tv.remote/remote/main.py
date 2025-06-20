@@ -70,6 +70,7 @@ def main():
     send_cmd('goto 11')
 
     client = mqtt.Client(mqtt.CallbackAPIVersion.VERSION2)
+    client.tls_set()
     client.username_pw_set(settings.user, settings.password)
     client.will_set(
             f'{settings.base_topic}/status', 
