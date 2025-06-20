@@ -67,11 +67,12 @@
 
     ```bash
     $ sudo apt install --no-install-recommends --yes \
-        curl \
-        vim \
         btop \
+        curl \
         figlet \
-        lolcat
+        lolcat \
+        tmux \
+        vim 
     ```
 
 
@@ -161,13 +162,15 @@
    $ evemu-event /dev/input/event3 --type EV_REL --code REL_Y --value 9999 --sync
    ```
 
+   **FIXME** Treba prist na to, ktore zariadenie je mys.
+
 
 12. nastavenie pevnej ip adresy na ethernetovy port v pripade, ak bude problem
 
    najprv sa nastavi ip adresa na 10.20.30.1
 
    ```bash
-   $ sudo nmcli connection modify Wired\ connection\ 1 \
+   $ sudo nmcli connection modify "Wired connection 1" \
       ipv4.addresses 10.20.30.1/24 \
       ipv4.method manual
    ```
@@ -175,7 +178,14 @@
    nasledne sa rozhranie zapne
 
    ```bash
-   $ sudo nmcli connection up Wired\ connection\ 1
+   $ sudo nmcli connection up "Wired connection 1"
+   ```
+
+   vysledok mozeme overit nasledovne:
+
+   ```bash
+   $ nmcli conn show
+   $ ip addr show eth0
    ```
 
 
@@ -192,11 +202,20 @@
      wifi-sec.psk "PASSWORD"
    ```
 
-   **Poznámka:** Spojenie po vytvoreni sa vola `preconfigured`. Ak ho chcete premenovat na nazov aktualnej siete, tak nasledujucim prikazom:
+   overit stav mozete prikazom:
+
+   ```bash
+   $ nmcli conn show
+   ```
+
+   **Poznámka:** Spojenie bude mat nazov podla toho, co uvediete v parametri `con-name`. Ak chcete spojenie premenovat na nazov aktualnej siete, tak nasledujucim prikazom:
 
    ```bash
    $ sudo nmcli connection modify "preconfigured" connection.id "WIFISSID"
    ```
+
+   **Poznamka:** kedy je nazov `preconfigured` ? starsia verzia?
+
 
 
 ## Autostart
@@ -271,18 +290,32 @@ V nasledujucich podkapitolach budu teda uvedene riesenia pre spustenie prehliada
    ```bash
    #!/usr/bin/env bash
 
+   # move mouse cursor out of the screen
+   evemu-event /dev/input/event1 --type EV_REL --code REL_X --value 9999 --sync
+   evemu-event /dev/input/event1 --type EV_REL --code REL_Y --value 9999 --sync
+
    # close other services
    killall -9 lwrespawn
    pcmanfm --desktop-off
    # killall -9 pcmanfm
    killall -9 wf-panel-pi
 
-   cvlc "${HOME}/Videos/"* \
-       --fullscreen \
-       --loop \
-       --no-osd \
-       --no-audio \
-       --no-mouse-events
+   # start vlc with telnet connection
+   cd "${HOME}/Videos" && cvlc \
+      --intf rc \
+      --rc-host localhost:4212 \
+      --fullscreen \
+      --no-video-title-show \
+      --video-on-top \
+      --no-audio \
+      --no-osd \
+      --no-mouse-events \
+      --file-logging \
+      --logfile="${HOME}/vlc_log.txt" \
+      --no-media-library \
+      --no-playlist-tree \
+      --repeat \
+      $(ls --reverse *webm)
    ```
 
 
@@ -307,8 +340,8 @@ V nasledujucich podkapitolach budu teda uvedene riesenia pre spustenie prehliada
    	send-keys "${CMD1}" C-m \; \
    	new-window \; \
    	send-keys "${CMD2}" C-m  \; \
-       new-window \; \
-       send-keys "${CMD3}" C-m \; \
+      new-window \; \
+      send-keys "${CMD3}" C-m \; \
    	attach
    ```
 
@@ -417,7 +450,76 @@ V nasledujucich podkapitolach budu teda uvedene riesenia pre spustenie prehliada
    ```
 
 
-## Misc a Cache
+## Dalsie tipy a triky
+
+
+### Vypnutie obrazovky
+
+* napríklad, aby nešla obrazovka v noci
+
+* da sa to pomocou nastroja `wlr-randr`. ked sa spusti bez parametrov, vypise zoznam vystupov. to je dolezite, aby sme vedeli, aky nazov ma obrazovka pripojena k nasmu zariadeniu
+
+* nasledne je mozne obrazovku vypnut takto:
+
+   ```bash
+   $ wlr-randr --output HDMI-A-1 --off
+   ```
+
+* a zapnut naopak takto:
+
+   ```bash
+   $ wlr-randr --output HDMI-A-1 --on
+   ```
+
+* v pripade potreby je mozne aj softverovo otocit obrazovku, napriklad hore nohami:
+
+   ```bash
+   $ wlr-randr --output HDMI-A-1 --transform 180
+   ```
+
+
+
+
+### Monitor cez tmux
+
+```bash
+#!/usr/bin/env bash
+
+# variables
+CMD1="docker compose --file /home/maker/kulturpark/tapgame/docker-compose/docker-compose.yaml logs --follow --tail 10"
+CMD2="dry"
+CMD3="htop"
+
+
+# run monitor with tmux
+tmux new-session -d -s monitor \; \
+	send-keys "${CMD1}" C-m \; \
+	new-window \; \
+	send-keys "${CMD2}" C-m  \; \
+    new-window \; \
+    send-keys "${CMD3}" C-m \; \
+	attach
+```
+   
+
+
+## Cache
+
+6. Upraviť súbor `/etc/default/nodm` nasledovne:
+
+   ```
+   # Set NODM_ENABLED to something different than 'false' to enable nodm
+   NODM_ENABLED=true
+
+   # User to autologin for
+   NODM_USER=maker
+
+   # The Xserver executable and the display name can be omitted, but should
+   # be placed in front, if nodm's defaults shall be overridden.
+   # with no cursor option
+   NODM_X_OPTIONS='-nolisten tcp -nocursor
+   ```
+
 
 
 1. Zmena wifi
@@ -485,55 +587,6 @@ $ systemctl --quiet set-default multi-user.target
 
 
 
-
-
-
-
-
-
-
-
-
-
-## Cache
-
-6. Upraviť súbor `/etc/default/nodm` nasledovne:
-
-   ```
-   # Set NODM_ENABLED to something different than 'false' to enable nodm
-   NODM_ENABLED=true
-
-   # User to autologin for
-   NODM_USER=maker
-
-   # The Xserver executable and the display name can be omitted, but should
-   # be placed in front, if nodm's defaults shall be overridden.
-   # with no cursor option
-   NODM_X_OPTIONS='-nolisten tcp -nocursor
-   ```
-
-
-
-## Monitor cez tmux
-
-```bash
-#!/usr/bin/env bash
-
-# variables
-CMD1="docker compose --file /home/maker/kulturpark/tapgame/docker-compose/docker-compose.yaml logs --follow --tail 10"
-CMD2="dry"
-CMD3="htop"
-
-
-# run monitor with tmux
-tmux new-session -d -s monitor \; \
-	send-keys "${CMD1}" C-m \; \
-	new-window \; \
-	send-keys "${CMD2}" C-m  \; \
-    new-window \; \
-    send-keys "${CMD3}" C-m \; \
-	attach
-```
 
 ## Resources
 

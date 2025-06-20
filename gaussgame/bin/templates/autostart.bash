@@ -4,8 +4,8 @@ readonly URL="http://localhost"
 
 
 # move mouse cursor out of the screen
-evemu-event /dev/input/event0 --type EV_REL --code REL_X --value 9999 --sync
-evemu-event /dev/input/event0 --type EV_REL --code REL_Y --value 9999 --sync
+evemu-event /dev/input/event1 --type EV_REL --code REL_X --value 9999 --sync
+evemu-event /dev/input/event1 --type EV_REL --code REL_Y --value 9999 --sync
 
 # close other services
 # turns off pcmanfm for desktop management

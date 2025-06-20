@@ -32,6 +32,98 @@ $ docker image tag bletvaska/gaussgame-core:${GAUSSGAME_VERSION} bletvaska/gauss
 ```
 
 
+
+
+## Testing with MQTT
+
+subscribe for all events
+
+```bash
+$ mosquitto_sub -h localhost -t kulturpark/gauss/# -F "%t: %p"
+```
+
+send tap event
+
+```bash
+$ mosquitto_pub -h localhost -t kulturpark/gauss/keyboard/event -m '{"name": "tap"}'
+```
+
+change screen
+
+```bash
+$ mosquitto_pub -h localhost -t kulturpark/gauss/screen -m '{"name": "START"}'
+$ mosquitto_pub -h localhost -t kulturpark/gauss/screen -m '{
+    "name": "RESULTS", 
+    "player": {"dt": "2025-06-17T16:41:21Z", "id": 1209, "score": 74, "name": "Srandovná Slaninka", "rank": 990}, 
+    "table": [
+        {"id": 578, "name": "Chichotavý Klokaník", "score": 211}, {"id": 566, "name": "Hopsavý Myšiak", "score": 199}, {"id": 572, "name": "Bublinková Myška", "score": 196}, {"id": 791, "name": "Srandovná Veverička", "score": 194}, {"id": 795, "name": "Bystrý Krtko", "score": 192}, {"id": 1137, "name": "Skákajúci Oceánik", "score": 192}, {"id": 793, "name": "Prskajúca Medvedica", "score": 189}, {"id": 965, "name": "Hopsavý Tuleň", "score": 188}, {"id": 567, "name": "Hopsavý Veveričiak", "score": 187}, {"id": 576, "name": "Hopsavá Konvalinka", "score": 186}, {"id": 606, "name": "Srandovný Slimáčik", "score": 186}, {"id": 740, "name": "Lenivá Konvalinka", "score": 186}
+    ], 
+    "chart": {
+        "labels": ["9 - 31", "32 - 53", "54 - 76", "77 - 98", "99 - 121", "122 - 143", "144 - 166", "167 - 188", "189 - 211"], 
+        "data": [22, 65, 146, 140, 197, 291, 253, 83, 6], 
+        "gauss": [],
+        "playerScoreBin": 2
+    }    
+}'
+```
+
+list of screens
+
+* START
+* GAUSS
+* RULES-1
+* RULES-2
+* RULES-3
+* GET_READY
+* PLAY
+* GAME_OVER
+* RESULTS
+
+
+```bash
+$ mosquitto_pub -h localhost -t kulturpark/gauss/screen -m '{
+    "name": "RESULTS", 
+    "player": {"dt": "2025-06-17T16:41:21Z", "id": 1209, "score": 74, "name": "Srandovná Slaninka", "rank": 990}, 
+    "table": [
+        {"id": 578, "name": "Chichotavý Klokaník", "score": 211}, {"id": 566, "name": "Hopsavý Myšiak", "score": 199}, {"id": 572, "name": "Bublinková Myška", "score": 196}, {"id": 791, "name": "Srandovná Veverička", "score": 194}, {"id": 795, "name": "Bystrý Krtko", "score": 192}, {"id": 1137, "name": "Skákajúci Oceánik", "score": 192}, {"id": 793, "name": "Prskajúca Medvedica", "score": 189}, {"id": 965, "name": "Hopsavý Tuleň", "score": 188}, {"id": 567, "name": "Hopsavý Veveričiak", "score": 187}, {"id": 576, "name": "Hopsavá Konvalinka", "score": 186}, {"id": 606, "name": "Srandovný Slimáčik", "score": 186}, {"id": 740, "name": "Lenivá Konvalinka", "score": 186}
+    ], 
+    "chart": {
+        "labels": [
+            "1 - 23",
+            "24 - 46",
+            "47 - 70",
+            "71 - 93",
+            "94 - 116",
+            "117 - 139",
+            "140 - 163",
+            "164 - 186",
+            "187 - 209",
+            "210 - 233"
+        ],
+        "data": [
+            12,
+            36,
+            59,
+            82,
+            106,
+            129,
+            152,
+            175,
+            199,
+            222
+        ],
+        "playerScoreBin": 4
+    }    
+}'
+
+
+
+
+
+
+
+
+
 # SPSE Presov
 
 ## Vianocny vianocny stromcek
