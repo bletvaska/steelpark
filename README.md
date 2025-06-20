@@ -1,6 +1,7 @@
-# kulturpark
+# SteelPark
 
-projekty robene pre kulturpark
+projekty robene pre SteelPark
 
-* tapgame - 
-* IoT Corner -
+* Gauss Game - v priecinku `gaussgame/`
+* IoT Corner - v priecinku `iotcorner/`
+
