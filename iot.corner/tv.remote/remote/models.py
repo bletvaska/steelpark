@@ -3,10 +3,7 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class Settings(BaseSettings):
-    broker: str
-    port: int = 1883
-    user: str | None = None
-    password: str | None = None
+    mqtt_uri: str = 'mqtt://localhost'
     base_topic: str = 'steelpark/iotcorner/tv'
     vlc_host: str = 'localhost'
     vlc_port: int

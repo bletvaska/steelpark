@@ -3,6 +3,7 @@
 import json
 import socket
 import time
+from urllib.parse import urlparse
 
 from loguru import logger
 import paho.mqtt.client as mqtt
@@ -54,10 +55,12 @@ def send_cmd(cmd: str):
 
 
 def wait_for_vlc(settings: Settings):
+    logger.info(f"Waiting for VLC at {settings.vlc_host}:{settings.vlc_port}...")
+
     while True:
         try:
-            with socket.create_connection((settings.vlc_host, settings.vlc_port), timeout=0.5) as sock:
-                logger.info(f"VLC is running at {settings.vlc_host}:{settings.vlc_port}.")
+            with socket.create_connection((settings.vlc_host, settings.vlc_port), timeout=0.5):
+                logger.info("VLC is running.")
                 return
         except (ConnectionRefusedError, socket.timeout):
             time.sleep(3)
@@ -66,12 +69,22 @@ def wait_for_vlc(settings: Settings):
 def main():
     settings = get_settings()
 
+    # Connect to VLC
     wait_for_vlc(settings)
     send_cmd('goto 11')
 
+    # init mqtt client
+    parsed = urlparse(settings.mqtt_uri)
     client = mqtt.Client(mqtt.CallbackAPIVersion.VERSION2)
-    client.tls_set()
-    client.username_pw_set(settings.user, settings.password)
+
+    # Set TLS if the scheme is mqtts
+    if parsed.scheme == "mqtts":
+        client.tls_set()
+
+    # Set username and password if provided
+    if parsed.username and parsed.password:
+        client.username_pw_set(parsed.username, parsed.password)
+
     client.will_set(
             f'{settings.base_topic}/status', 
             json.dumps({'status': 'offline'}), 
@@ -82,7 +95,7 @@ def main():
     client.on_message = on_message
 
     try:
-        client.connect(settings.broker, settings.port, 60)
+        client.connect(parsed.hostname, parsed.port, 60)
         client.publish(
                 f'{settings.base_topic}/status', 
                 json.dumps({'status': 'online'}), 
