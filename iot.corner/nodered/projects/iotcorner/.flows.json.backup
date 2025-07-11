@@ -1,0 +1,939 @@
+[
+    {
+        "id": "f6f2187d.f17ca8",
+        "type": "tab",
+        "label": "tv remote",
+        "disabled": false,
+        "info": "# ovladanie telky\n\n## premenne prostredia\n\n* `MQTT_SERVER` - adresa MQTT brokera\n* `MQTT_PORT` - port pre pripojenie na MQTT broker\n* `MQTT_USER` - meno pouzivatela\n* `MQTT_PASSWORD` - heslo pouzivatela\n* `TV_IR_POWER_CODE` - IR kod, ktory posle dialkove ovladanie do telky\n* `TV_TIMEOUT` - cas necinnosti v sekundach, po ktorom sa telka automaticky vypne\n* `VLC_HOST` - IP adresa pocitaca, kde je spusteny VLC\n* `VLC_PORT` - port, na ktorom VLC komunikuje\n\n\n## mqtt temy\n\n* `MQTT_BASE_TOPIC` - prefix temy pre steelpark\n* `${MQTT_BASE_TOPIC}/tv/cmd` - tema, do ktorej chodia spravy z weboveho dialkoveho ovladaca\n\n\n## premenne flow-u\n\n* `tvMode` - rezim prace telky, pripustne hodnoty su:\n    * `on` - telka je zapnuta - prehrava video\n    * `off` - telka je vypnuta - na obrazovke sa zobrazuje len logo\n    * `powerOff` - telka je vypnuta dialkovym ovladacom\n\n\n## ako to pracuje\n\n"
+    },
+    {
+        "id": "7ca3719dc09ac571",
+        "type": "tab",
+        "label": "Flow 2",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "6efd123c0c37e0d4",
+        "type": "mqtt-broker",
+        "z": "f6f2187d.f17ca8",
+        "name": "steelpark@hivemq",
+        "broker": "${MQTT_SERVER}",
+        "port": "${MQTT_PORT}",
+        "tls": "",
+        "clientid": "",
+        "autoConnect": true,
+        "usetls": true,
+        "protocolVersion": 4,
+        "keepalive": 60,
+        "cleansession": true,
+        "autoUnsubscribe": true,
+        "birthTopic": "steelpark/iotcorner/tv/status",
+        "birthQos": "1",
+        "birthRetain": "true",
+        "birthPayload": "{\"status\": \"online\"}",
+        "birthMsg": {},
+        "closeTopic": "",
+        "closeQos": "0",
+        "closeRetain": "false",
+        "closePayload": "",
+        "closeMsg": {},
+        "willTopic": "steelpark/iotcorner/tv/status",
+        "willQos": "1",
+        "willRetain": "true",
+        "willPayload": "{\"status\": \"offline\"}",
+        "willMsg": {},
+        "userProps": "",
+        "sessionExpiry": ""
+    },
+    {
+        "id": "03253b1580d1b166",
+        "type": "ui_tab",
+        "name": "Home",
+        "icon": "dashboard",
+        "disabled": false,
+        "hidden": false
+    },
+    {
+        "id": "cc60be38126e5a08",
+        "type": "ui_base",
+        "theme": {
+            "name": "theme-light",
+            "lightTheme": {
+                "default": "#0094CE",
+                "baseColor": "#0094CE",
+                "baseFont": "-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Oxygen-Sans,Ubuntu,Cantarell,Helvetica Neue,sans-serif",
+                "edited": false
+            },
+            "darkTheme": {
+                "default": "#097479",
+                "baseColor": "#097479",
+                "baseFont": "-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Oxygen-Sans,Ubuntu,Cantarell,Helvetica Neue,sans-serif",
+                "edited": false
+            },
+            "customTheme": {
+                "name": "Untitled Theme 1",
+                "default": "#4B7930",
+                "baseColor": "#4B7930",
+                "baseFont": "-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Oxygen-Sans,Ubuntu,Cantarell,Helvetica Neue,sans-serif"
+            },
+            "themeState": {
+                "base-color": {
+                    "default": "#0094CE",
+                    "value": "#0094CE",
+                    "edited": false
+                },
+                "page-titlebar-backgroundColor": {
+                    "value": "#0094CE",
+                    "edited": false
+                },
+                "page-backgroundColor": {
+                    "value": "#fafafa",
+                    "edited": false
+                },
+                "page-sidebar-backgroundColor": {
+                    "value": "#ffffff",
+                    "edited": false
+                },
+                "group-textColor": {
+                    "value": "#1bbfff",
+                    "edited": false
+                },
+                "group-borderColor": {
+                    "value": "#ffffff",
+                    "edited": false
+                },
+                "group-backgroundColor": {
+                    "value": "#ffffff",
+                    "edited": false
+                },
+                "widget-textColor": {
+                    "value": "#111111",
+                    "edited": false
+                },
+                "widget-backgroundColor": {
+                    "value": "#0094ce",
+                    "edited": false
+                },
+                "widget-borderColor": {
+                    "value": "#ffffff",
+                    "edited": false
+                },
+                "base-font": {
+                    "value": "-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Oxygen-Sans,Ubuntu,Cantarell,Helvetica Neue,sans-serif"
+                }
+            },
+            "angularTheme": {
+                "primary": "indigo",
+                "accents": "blue",
+                "warn": "red",
+                "background": "grey",
+                "palette": "light"
+            }
+        },
+        "site": {
+            "name": "Node-RED Dashboard",
+            "hideToolbar": "false",
+            "allowSwipe": "false",
+            "lockMenu": "false",
+            "allowTempTheme": "true",
+            "dateFormat": "DD/MM/YYYY",
+            "sizes": {
+                "sx": 48,
+                "sy": 48,
+                "gx": 6,
+                "gy": 6,
+                "cx": 6,
+                "cy": 6,
+                "px": 0,
+                "py": 0
+            }
+        }
+    },
+    {
+        "id": "a350e7d698321017",
+        "type": "ui_group",
+        "name": "Default",
+        "tab": "03253b1580d1b166",
+        "order": 1,
+        "disp": true,
+        "width": 6,
+        "collapse": false,
+        "className": ""
+    },
+    {
+        "id": "744cdac0a81aa84f",
+        "type": "mqtt-broker",
+        "name": "steelpark at hivemq",
+        "broker": "mqtts://78a616db237848caafd6d609ef8f627a.s1.eu.hivemq.cloud:8883",
+        "port": 1883,
+        "clientid": "",
+        "autoConnect": true,
+        "usetls": false,
+        "protocolVersion": 4,
+        "keepalive": 60,
+        "cleansession": true,
+        "autoUnsubscribe": true,
+        "birthTopic": "",
+        "birthQos": "0",
+        "birthRetain": "false",
+        "birthPayload": "",
+        "birthMsg": {},
+        "closeTopic": "",
+        "closeQos": "0",
+        "closeRetain": "false",
+        "closePayload": "",
+        "closeMsg": {},
+        "willTopic": "",
+        "willQos": "0",
+        "willRetain": "false",
+        "willPayload": "",
+        "willMsg": {},
+        "userProps": "",
+        "sessionExpiry": ""
+    },
+    {
+        "id": "4e19ea96a004aa1a",
+        "type": "ui_tab",
+        "name": "Home",
+        "icon": "dashboard",
+        "disabled": false,
+        "hidden": false
+    },
+    {
+        "id": "a4a8a327d1bc0b4b",
+        "type": "ui_group",
+        "name": "Default",
+        "tab": "4e19ea96a004aa1a",
+        "order": 1,
+        "disp": true,
+        "width": 6,
+        "collapse": false,
+        "className": ""
+    },
+    {
+        "id": "8e9ec99103ceae39",
+        "type": "mqtt in",
+        "z": "f6f2187d.f17ca8",
+        "name": "remote cmd",
+        "topic": "steelpark/iotcorner/tv/cmd",
+        "qos": "2",
+        "datatype": "auto-detect",
+        "broker": "6efd123c0c37e0d4",
+        "nl": false,
+        "rap": true,
+        "rh": 0,
+        "inputs": 0,
+        "x": 150,
+        "y": 140,
+        "wires": [
+            [
+                "f53f16ce3da24c2c",
+                "deca9f2f8a417653"
+            ]
+        ]
+    },
+    {
+        "id": "e48b802407725ad7",
+        "type": "switch",
+        "z": "f6f2187d.f17ca8",
+        "name": "",
+        "property": "payload.name",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "eq",
+                "v": "change_channel",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "toggle",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "turn_on",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "turn_off",
+                "vt": "str"
+            }
+        ],
+        "checkall": "false",
+        "repair": false,
+        "outputs": 4,
+        "x": 570,
+        "y": 140,
+        "wires": [
+            [
+                "84335e17a30e159d"
+            ],
+            [
+                "07089635309a9b36"
+            ],
+            [
+                "e8eddbff70874071"
+            ],
+            [
+                "c6e3f0916bf0a6b4"
+            ]
+        ]
+    },
+    {
+        "id": "4985f31eb96dd3bd",
+        "type": "inject",
+        "z": "f6f2187d.f17ca8",
+        "name": "set channel 3",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"name\":\"change_channel\",\"channel\":3}",
+        "payloadType": "json",
+        "x": 410,
+        "y": 40,
+        "wires": [
+            [
+                "e48b802407725ad7"
+            ]
+        ]
+    },
+    {
+        "id": "4325d63735a74ce8",
+        "type": "function",
+        "z": "f6f2187d.f17ca8",
+        "name": "switch channel",
+        "func": "// configure variables\nconst vlc_host = env.get('VLC_HOST');\nconst vlc_port = env.get('VLC_PORT');\nconst vlc_password = env.get(\"VLC_PASSWORD\");\nlet channel = msg.payload.channel + 10;\n\nlet nc = `nc ${vlc_host} ${vlc_port}`\nlet cmd = `echo \"${vlc_password}\"; sleep 0.2; echo \"goto ${channel}\"`;\n\n// create payload\nmsg.payload = `(${cmd}) | ${nc}`;\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1020,
+        "y": 40,
+        "wires": [
+            [
+                "866804f941097720"
+            ]
+        ]
+    },
+    {
+        "id": "df3de522f0ae575e",
+        "type": "inject",
+        "z": "f6f2187d.f17ca8",
+        "name": "toggle",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"name\":\"toggle\"}",
+        "payloadType": "json",
+        "x": 390,
+        "y": 80,
+        "wires": [
+            [
+                "e48b802407725ad7"
+            ]
+        ]
+    },
+    {
+        "id": "866804f941097720",
+        "type": "exec",
+        "z": "f6f2187d.f17ca8",
+        "command": "",
+        "addpay": "payload",
+        "append": "",
+        "useSpawn": "false",
+        "timer": "3",
+        "winHide": false,
+        "oldrc": false,
+        "name": "send msg to VLC",
+        "x": 1650,
+        "y": 160,
+        "wires": [
+            [
+                "692c4dabc90d31d1"
+            ],
+            [],
+            []
+        ]
+    },
+    {
+        "id": "d8d46d395b1e3818",
+        "type": "function",
+        "z": "f6f2187d.f17ca8",
+        "name": "turn on",
+        "func": "// configure variables\nconst vlc_host = env.get(\"VLC_HOST\");\nconst vlc_port = env.get(\"VLC_PORT\");\nconst vlc_password = env.get(\"VLC_PASSWORD\");\n\nlet nc = `nc ${vlc_host} ${vlc_port}`;\nlet cmd = `echo \"${vlc_password}\"; sleep 0.2; echo \"goto 11\"`;\n\n// create payload\nmsg.payload = `(${cmd}) | ${nc}`;\n\n// update state\n// flow.set('tvMode', true);\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1380,
+        "y": 160,
+        "wires": [
+            [
+                "866804f941097720"
+            ]
+        ]
+    },
+    {
+        "id": "e050913b948ca102",
+        "type": "function",
+        "z": "f6f2187d.f17ca8",
+        "name": "turn off",
+        "func": "// configure variables\nconst vlc_host = env.get('VLC_HOST');\nconst vlc_port = env.get('VLC_PORT');\nconst vlc_password = env.get(\"VLC_PASSWORD\");\n\nlet nc = `nc ${vlc_host} ${vlc_port}`\nlet cmd = `echo \"${vlc_password}\"; sleep 0.2; echo \"goto 10\"; sleep 0.2; echo \"pause\"`;\n\n// create payload\nmsg.payload = `(${cmd}) | ${nc}`;\n\n// update state\n// flow.set('tvMode', false);\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1370,
+        "y": 240,
+        "wires": [
+            [
+                "866804f941097720"
+            ]
+        ]
+    },
+    {
+        "id": "d3b134ab694b7a01",
+        "type": "inject",
+        "z": "f6f2187d.f17ca8",
+        "name": "on start turn tv on",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": true,
+        "onceDelay": "5",
+        "topic": "",
+        "payload": "{\"name\":\"turn_on\"}",
+        "payloadType": "json",
+        "x": 450,
+        "y": 220,
+        "wires": [
+            [
+                "2ef05b42d904dca9"
+            ]
+        ]
+    },
+    {
+        "id": "07089635309a9b36",
+        "type": "switch",
+        "z": "f6f2187d.f17ca8",
+        "name": "current state",
+        "property": "tvMode",
+        "propertyType": "flow",
+        "rules": [
+            {
+                "t": "eq",
+                "v": "off",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "on",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "powerOff",
+                "vt": "str"
+            }
+        ],
+        "checkall": "false",
+        "repair": false,
+        "outputs": 3,
+        "x": 790,
+        "y": 100,
+        "wires": [
+            [
+                "e8eddbff70874071"
+            ],
+            [
+                "c6e3f0916bf0a6b4"
+            ],
+            [
+                "e8eddbff70874071"
+            ]
+        ]
+    },
+    {
+        "id": "84335e17a30e159d",
+        "type": "switch",
+        "z": "f6f2187d.f17ca8",
+        "name": "is tv on?",
+        "property": "tvMode",
+        "propertyType": "flow",
+        "rules": [
+            {
+                "t": "eq",
+                "v": "on",
+                "vt": "str"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 1,
+        "x": 780,
+        "y": 40,
+        "wires": [
+            [
+                "4325d63735a74ce8"
+            ]
+        ]
+    },
+    {
+        "id": "f53f16ce3da24c2c",
+        "type": "change",
+        "z": "f6f2187d.f17ca8",
+        "name": "last update",
+        "rules": [
+            {
+                "t": "set",
+                "p": "lastUpdate",
+                "pt": "flow",
+                "to": "",
+                "tot": "date"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 370,
+        "y": 140,
+        "wires": [
+            [
+                "e48b802407725ad7"
+            ]
+        ]
+    },
+    {
+        "id": "55194a5475861f8f",
+        "type": "inject",
+        "z": "f6f2187d.f17ca8",
+        "name": "inactivity?",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "60",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "str",
+        "x": 110,
+        "y": 460,
+        "wires": [
+            [
+                "1d910629125d386e"
+            ]
+        ]
+    },
+    {
+        "id": "deca9f2f8a417653",
+        "type": "debug",
+        "z": "f6f2187d.f17ca8",
+        "name": "debug 2",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 380,
+        "y": 280,
+        "wires": []
+    },
+    {
+        "id": "1d910629125d386e",
+        "type": "function",
+        "z": "f6f2187d.f17ca8",
+        "name": "going to be idle?",
+        "func": "// stop if already idle\nif(flow.get('tvMode') === \"powerOff\" ){\n    return null;\n}\n\n// check if not idle yet\nlet lastUpdate = flow.get('lastUpdate');\nlet delta = Math.floor( (Date.now() - lastUpdate) / 1000)\nlet timeout = env.get(\"TV_TIMEOUT\");\nif(delta < timeout){\n    return null;    \n}\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 320,
+        "y": 460,
+        "wires": [
+            [
+                "6dbde7487acdfd14"
+            ]
+        ]
+    },
+    {
+        "id": "6dbde7487acdfd14",
+        "type": "change",
+        "z": "f6f2187d.f17ca8",
+        "name": "power off",
+        "rules": [
+            {
+                "t": "set",
+                "p": "tvMode",
+                "pt": "flow",
+                "to": "powerOff",
+                "tot": "str"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 520,
+        "y": 460,
+        "wires": [
+            [
+                "e050913b948ca102",
+                "bc526a79f9a51096",
+                "ec19ad91d3f3f482"
+            ]
+        ]
+    },
+    {
+        "id": "7c950910f24d9c42",
+        "type": "mqtt out",
+        "z": "f6f2187d.f17ca8",
+        "name": "togle power on/off",
+        "topic": "",
+        "qos": "",
+        "retain": "",
+        "respTopic": "",
+        "contentType": "",
+        "userProps": "",
+        "correl": "",
+        "expiry": "",
+        "broker": "6efd123c0c37e0d4",
+        "x": 950,
+        "y": 460,
+        "wires": []
+    },
+    {
+        "id": "ec19ad91d3f3f482",
+        "type": "template",
+        "z": "f6f2187d.f17ca8",
+        "name": "log message",
+        "field": "payload",
+        "fieldType": "msg",
+        "format": "handlebars",
+        "syntax": "mustache",
+        "template": "Timeout expired — the TV will be turned off.",
+        "output": "str",
+        "x": 710,
+        "y": 520,
+        "wires": [
+            [
+                "760a67e6dbd1b335"
+            ]
+        ]
+    },
+    {
+        "id": "c6e3f0916bf0a6b4",
+        "type": "change",
+        "z": "f6f2187d.f17ca8",
+        "name": "set tv mode to off",
+        "rules": [
+            {
+                "t": "set",
+                "p": "tvMode",
+                "pt": "flow",
+                "to": "off",
+                "tot": "str"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 1150,
+        "y": 240,
+        "wires": [
+            [
+                "e050913b948ca102"
+            ]
+        ]
+    },
+    {
+        "id": "e8eddbff70874071",
+        "type": "change",
+        "z": "f6f2187d.f17ca8",
+        "name": "set tv mode to on",
+        "rules": [
+            {
+                "t": "set",
+                "p": "tvMode",
+                "pt": "flow",
+                "to": "on",
+                "tot": "str"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 1150,
+        "y": 160,
+        "wires": [
+            [
+                "d8d46d395b1e3818"
+            ]
+        ]
+    },
+    {
+        "id": "bc526a79f9a51096",
+        "type": "function",
+        "z": "f6f2187d.f17ca8",
+        "name": "prepare ir code",
+        "func": "// get env variables\nlet base_topic = env.get('MQTT_BASE_TOPIC');\nlet power_code = env.get('TV_IR_POWER_CODE');\n\n// prepare topic and message\nmsg.topic = `${base_topic}/z2m/remote/set`;\nmsg.payload = {\n    \"ir_code_to_send\": power_code\n};\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 720,
+        "y": 460,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "760a67e6dbd1b335",
+        "type": "debug",
+        "z": "f6f2187d.f17ca8",
+        "name": "debug 3",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 900,
+        "y": 520,
+        "wires": []
+    },
+    {
+        "id": "2ef05b42d904dca9",
+        "type": "change",
+        "z": "f6f2187d.f17ca8",
+        "name": "last update",
+        "rules": [
+            {
+                "t": "set",
+                "p": "lastUpdate",
+                "pt": "flow",
+                "to": "",
+                "tot": "date"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 670,
+        "y": 220,
+        "wires": [
+            [
+                "e8eddbff70874071"
+            ]
+        ]
+    },
+    {
+        "id": "692c4dabc90d31d1",
+        "type": "debug",
+        "z": "f6f2187d.f17ca8",
+        "name": "debug 4",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1820,
+        "y": 260,
+        "wires": []
+    },
+    {
+        "id": "3845f3baa88b08a6",
+        "type": "inject",
+        "z": "f6f2187d.f17ca8",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 280,
+        "y": 580,
+        "wires": [
+            [
+                "c7fffe13a3a8d856"
+            ]
+        ]
+    },
+    {
+        "id": "c7fffe13a3a8d856",
+        "type": "function",
+        "z": "f6f2187d.f17ca8",
+        "name": "function 1",
+        "func": "const password = env.get('VLC_PASSWORD');\nmsg.payload = password;\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 460,
+        "y": 580,
+        "wires": [
+            [
+                "086eefaf3a536c86"
+            ]
+        ]
+    },
+    {
+        "id": "086eefaf3a536c86",
+        "type": "debug",
+        "z": "f6f2187d.f17ca8",
+        "name": "debug 5",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 660,
+        "y": 580,
+        "wires": []
+    },
+    {
+        "id": "f671fbf8bbd12242",
+        "type": "ui_button",
+        "z": "7ca3719dc09ac571",
+        "name": "",
+        "group": "a4a8a327d1bc0b4b",
+        "order": 0,
+        "width": 0,
+        "height": 0,
+        "passthru": false,
+        "label": "Toggle",
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "className": "",
+        "icon": "",
+        "payload": "",
+        "payloadType": "str",
+        "topic": "topic",
+        "topicType": "msg",
+        "x": 390,
+        "y": 300,
+        "wires": [
+            [
+                "692466ec3e70e98f"
+            ]
+        ]
+    },
+    {
+        "id": "692466ec3e70e98f",
+        "type": "template",
+        "z": "7ca3719dc09ac571",
+        "name": "",
+        "field": "payload",
+        "fieldType": "msg",
+        "format": "handlebars",
+        "syntax": "mustache",
+        "template": "{\n    \"name\": \"toggle\"\n}",
+        "output": "json",
+        "x": 600,
+        "y": 300,
+        "wires": [
+            [
+                "95b31354cb422b17"
+            ]
+        ]
+    },
+    {
+        "id": "95b31354cb422b17",
+        "type": "debug",
+        "z": "7ca3719dc09ac571",
+        "name": "debug 1",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 820,
+        "y": 300,
+        "wires": []
+    }
+]

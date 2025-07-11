@@ -302,8 +302,9 @@ V nasledujucich podkapitolach budu teda uvedene riesenia pre spustenie prehliada
 
    # start vlc with telnet connection
    cd "${HOME}/Videos" && cvlc \
-      --intf rc \
-      --rc-host localhost:4212 \
+      --intf telnet \
+      --telnet-port 4212 \
+      --telnet-password hello \
       --fullscreen \
       --no-video-title-show \
       --video-on-top \
