@@ -11,8 +11,8 @@ services:
     volumes:
       - ./z2m:/app/data/
     devices:
-    #  - /dev/serial/by-id/usb-Nabu_Casa_SkyConnect_v1.0_067e5cc0ce91ed11b97ccad13b20a988-if00-port0:/dev/ttyUSB0
-      - /dev/serial/by-id/usb-Texas_Instruments_TI_CC2531_USB_CDC___0X00124B001CDFEF8E-if00:/dev/ttyUSBO
+      - /dev/serial/by-id/usb-Nabu_Casa_SkyConnect_v1.0_067e5cc0ce91ed11b97ccad13b20a988-if00-port0:/dev/ttyUSB0
+    #  - /dev/serial/by-id/usb-Texas_Instruments_TI_CC2531_USB_CDC___0X00124B001CDFEF8E-if00:/dev/ttyUSBO
     environment:
       - ZIGBEE2MQTT_CONFIG_SERIAL_ADAPTER=ember
       - ZIGBEE2MQTT_CONFIG_SERIAL_PORT=/dev/ttyUSB0
@@ -21,3 +21,29 @@ services:
       - ZIGBEE2MQTT_CONFIG_MQTT_PASSWORD=${MQTT_PASSWORD}
       - ZIGBEE2MQTT_CONFIG_MQTT_BASE_TOPIC=steelpark/iotcorner/z2m
 
+
+  nodered:
+    image: nodered/node-red:4.0.9-minimal
+    restart: always
+    # ports:
+    #   - 1880:1880
+    network_mode: host
+    volumes:
+      - nodered_data:/data
+      - ./nodered-projects/:/data/projects/
+    environment:
+      - TZ=Europe/Prague
+      - NODE_RED_ENABLE_PROJECTS=true
+      - MQTT_SERVER=${MQTT_SERVER}
+      - MQTT_USER=${MQTT_USER}
+      - MQTT_PASSWORD=${MQTT_PASSWORD}
+      - MQTT_BASE_TOPIC=${MQTT_BASE_TOPIC:-steelpark/iotcorner/}
+      - VLC_HOST=${VLC_HOST:-127.0.0.1}
+      - VLC_PORT=${VLC_PORT:-4212}
+      - TV_TIMEOUT=${TV_TIMEOUT:-60} # seconds, how long to wait before turning off TV after last command
+      - TV_IR_POWER_CODE=${TV_IR_POWER_CODE}
+    # depends_on:
+      # - z2m
+
+volumes:
+  nodered_data:

@@ -1,8 +1,12 @@
-homeassistant: false
-frontend: true
+homeassistant:
+  enabled: false
+frontend:
+  enabled: true
 mqtt:
-  base_topic: zigbee2mqtt
-  server: http://mosquitto
+  base_topic: steelpark/iotcorner/z2m
+  server: mqtts://78a616db237848caafd6d609ef8f627a.s1.eu.hivemq.cloud:8883
+  user: maker
+  password: Kulturpark13
 serial:
   port: /dev/ttyUSB0
   adapter: ember
@@ -36,11 +40,7 @@ advanced:
     - 101
     - 119
     - 165
-  homeassistant_legacy_entity_attributes: false
-  legacy_api: false
-  legacy_availability_payload: false
-device_options:
-  legacy: false
+device_options: {}
 devices:
   '0x08ddebfffed746e0':
     friendly_name: socket-4
@@ -52,3 +52,4 @@ devices:
     friendly_name: socket-1
   '0x8c65a3fffe86d52b':
     friendly_name: socket-5
+version: 4

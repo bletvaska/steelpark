@@ -319,6 +319,28 @@ V nasledujucich podkapitolach budu teda uvedene riesenia pre spustenie prehliada
    ```
 
 
+### Splash Screen
+
+* stara sa on [Plymouth](https://wiki.archlinux.org/title/Plymouth)
+   * správca tém pre spúšťanie/ukončovanie systému
+   * splash screen môže byť aj animácia
+* da sa spravit vlastna tema, ale ak staci len zmenit splashscreen, tak:
+   ```bash
+   # zistíme aktuálnu tému
+   $ plymouth-set-default-theme
+   pix
+
+   # zmeníme jej splash obrazovku za vlastnú
+   /usr/share/plymouth/themes/pix/splash.png
+
+   # aplikujeme
+   $ sudo plymouth-set-default-theme --rebuild-initrd pix
+
+   # bude to trvat tak 3 minuty
+   ```
+
+
+
 ## Vychytávky
 
 ### Monitor cez tmux

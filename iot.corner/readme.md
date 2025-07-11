@@ -46,7 +46,7 @@ Kedze je ale nasadenie cez externy web a externe mqtt, tym padom sa spusta len Z
 
 ## Spustenie prehravaca
 
-vytvorit skript na prehravanie v `~/runner.bash`:
+vytvorit skript na prehravanie v `~/.config/labwc/autorun`:
 
 ```bash
 #!/usr/bin/env bash
@@ -63,15 +63,6 @@ cvlc "${HOME}/Videos/"* \
     --no-mouse-events
 ```
 
-vytovrit autostart subor  `~/.config/autostart/vlc.desktop`:
-
-```desktop
-[Desktop Entry]
-Type=Application
-Name=Video Player
-Exec=/home/maker/runner.bash
-X-GNOME-Autostart-enabled=true
-```
 
 
 ## Zariadenia na MQTT
@@ -82,9 +73,3 @@ X-GNOME-Autostart-enabled=true
 * remote - https://www.zigbee2mqtt.io/devices/ZS06.html#tuya-zs06
 * socket-X - https://www.zigbee2mqtt.io/devices/E2204.html#ikea-e2204
 
-
-zapnutie wifi na rpi:
-
-```bash
-$ nmcli connection up hello-world
-```

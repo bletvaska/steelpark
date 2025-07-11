@@ -173,4 +173,5 @@ cython_debug/
 
 db.sqlite
 database.db
-
+configuration_backup_*.yaml
+.vscode/
