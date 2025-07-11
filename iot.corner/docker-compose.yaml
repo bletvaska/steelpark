@@ -44,6 +44,8 @@ services:
       - VLC_PASSWORD=${VLC_PASSWORD}
       - TV_TIMEOUT=${TV_TIMEOUT:-60} # seconds, how long to wait before turning off TV after last command
       - TV_IR_POWER_CODE=${TV_IR_POWER_CODE}
+      - NR_USER=${NR_USER}
+      - NR_PASSWORD=${NR_PASSWORD}
     # depends_on:
       # - z2m
 
