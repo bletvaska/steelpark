@@ -9,13 +9,22 @@ RUN apt-get update \
         python3-pip \
         python3-pandas
 
-COPY dist/gaussgame-${VERSION}-py3-none-any.whl /wheels/
 RUN pip3 download --dest /wheels/ \
-        /wheels/gaussgame-${VERSION}-py3-none-any.whl \
         gpiozero \
         lgpio \
         pigpio \
         rpi.gpio
+
+COPY dist/gaussgame-${VERSION}-py3-none-any.whl /wheels/
+
+RUN apt-get install --yes --no-install-recommends \
+        build-essential \
+        gfortran \
+        python3-dev \
+        libopenblas-dev \
+        liblapack-dev \
+    && pip3 download --dest /wheels/ \
+        /wheels/gaussgame-${VERSION}-py3-none-any.whl
 
 
 FROM arm32v7/ubuntu:25.04 AS final

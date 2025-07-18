@@ -80,11 +80,26 @@ $ mosquitto_pub -h localhost -t steelpark/gauss/keyboard/event -m '{"name": "tap
 periodically send taps:
 
 ```bash
-export MQTT_URI="mqtt://localhost:1883/kulturpark/gauss/keyboard/event"
+export MQTT_URI="mqtt://localhost:1883/steelpark/gauss/keyboard/event"
 
 while true; do 
-    mosquitto_pub -L $MQTT_URI -m '{"name": "tap"}'
-    sleep 5
+    # rules
+    for _ in 1 2 3; do
+        mosquitto_pub -L $MQTT_URI -m '{"name": "tap"}'
+        sleep 1
+    done
+
+    # delay
+    sleep 4
+
+    # game
+    for _ in {1..60}; do
+        mosquitto_pub -L $MQTT_URI -m '{"name": "tap"}'
+        sleep 1
+    done
+
+    # delay
+    sleep 10
 done
 ```
 
