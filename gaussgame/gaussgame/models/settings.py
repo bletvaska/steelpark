@@ -5,11 +5,8 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 @cache
 class Settings(BaseSettings):
-    broker: str = 'mosquitto'
-    port: int = 1883
-    user: str | None = None
-    password: str | None = None
-    topic_prefix: str = 'kulturpark/gauss'
+    mqtt_uri: str = 'mqtt://localhost'
+    base_topic: str = 'steelpark/gauss'
     idle_duration: int = 20
     inactive_view_duration: int = 5
     results_view_duration: int = 20
@@ -23,27 +20,27 @@ class Settings(BaseSettings):
     @computed_field
     @property
     def keyboard_topic(self) -> str:
-        return f'{self.topic_prefix}/keyboard'
+        return f'{self.base_topic}/keyboard'
     
     @computed_field
     @property
     def screen_topic(self) -> str:
-        return f'{self.topic_prefix}/screen'
+        return f'{self.base_topic}/screen'
     
     @computed_field
     @property
     def results_topic(self) -> str:
-        return f'{self.topic_prefix}/results'
+        return f'{self.base_topic}/results'
         
     @computed_field
     @property
     def backend_topic(self) -> str:
-        return f'{self.topic_prefix}/backend'
+        return f'{self.base_topic}/backend'
     
     @computed_field
     @property
     def bridge_topic(self) -> str:
-        return f'{self.topic_prefix}/bridge'
+        return f'{self.base_topic}/bridge'
 
     model_config = SettingsConfigDict(
         env_prefix='GAUSS_',

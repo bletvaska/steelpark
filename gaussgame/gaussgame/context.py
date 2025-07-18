@@ -1,5 +1,6 @@
 import json
 import sys
+from urllib.parse import urlparse
 
 import paho.mqtt.client as mqtt
 from loguru import logger
@@ -32,8 +33,18 @@ class Context:
 
 
     def _init_mqtt_client(self):
+        # init mqtt client
+        parsed = urlparse(self.settings.mqtt_uri)
         client = mqtt.Client(mqtt.CallbackAPIVersion.VERSION2, client_id="core")
-        client.username_pw_set(self.settings.user, self.settings.password)
+
+        # Set TLS if the scheme is mqtts
+        if parsed.scheme == "mqtts":
+            client.tls_set()
+
+        # Set username and password if provided
+        if parsed.username and parsed.password:
+            client.username_pw_set(parsed.username, parsed.password)
+
         client.will_set(
             f"{self.settings.backend_topic}/status",
             json.dumps({"status": "offline"}),
@@ -44,9 +55,15 @@ class Context:
 
 
     def run(self):
+        logger.debug('Current Settings')
+        logger.debug(dict(self.settings))
+    
+        parsed = urlparse(self.settings.mqtt_uri)
+        logger.debug(parsed)
+
         try:
-            logger.info(f"Connecting to MQTT broker {self.settings.broker}")
-            self.mqtt_client.connect(self.settings.broker, self.settings.port, 60)
+            logger.info(f"Connecting to MQTT broker {parsed.hostname}")
+            self.mqtt_client.connect(parsed.hostname, parsed.port, 60)
             self.mqtt_client.publish(
                 f"{self.settings.backend_topic}/status",
                 json.dumps({"status": "online"}),
@@ -55,9 +72,8 @@ class Context:
             self.mqtt_client.subscribe(f'{self.settings.keyboard_topic}/event')
             self.mqtt_client.loop_start()
 
-            logger.debug('Current Settings')
-            logger.debug(dict(self.settings))
             logger.info("Running main loop")
+
             while True:
                 state = self.state
                 
@@ -73,7 +89,7 @@ class Context:
                 state.on_exit()
 
         except OSError as ex:
-            logger.critical(f"Can't connect to the broker '{self.settings.broker}'")
+            logger.critical(f"Can't connect to the broker '{parsed.hostname}'")
 
         except Exception as ex:
             logger.error("Something went wrong")

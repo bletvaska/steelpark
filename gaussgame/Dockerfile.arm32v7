@@ -1,43 +1,33 @@
 # to build run:
 # docker buildx build --platform linux/arm/v7 --tag bletvaska/gaussgame-core --file Dockerfile.arm32v7 --push .
-FROM arm32v7/ubuntu:24.04 AS builder
+FROM arm32v7/ubuntu:25.04 AS builder
 
 ARG VERSION
 
- RUN apt-get update \
-     && apt-get install --no-install-recommends --yes \
-         python3-pip=24.0+dfsg-1ubuntu1.1
-#         python3-lgpio=0.2.0.0-0ubuntu3 \
-#         python3-pigpio=1.78-1.1build1 \
-#         python3-rpi.gpio=0.7.1~a4-1build5 \
-#         pulseaudio-utils \
-#         libglib2.0 \
-#         python3-pygame
-# RUN pip3 install --no-cache-dir --break-system-packages \
-    # gpiozero==2.0.1
+RUN apt-get update \
+    && apt-get install --no-install-recommends --yes \
+        python3-pip \
+        python3-pandas
 
 COPY dist/gaussgame-${VERSION}-py3-none-any.whl /wheels/
-RUN pip3 download \
-    /wheels/gaussgame-${VERSION}-py3-none-any.whl \
-    gpiozero==2.0.1 \
-    lgpio==0.2.2.0 \
-    pigpio==1.78 \
-    rpi.gpio \
-    --dest /wheels/
+RUN pip3 download --dest /wheels/ \
+        /wheels/gaussgame-${VERSION}-py3-none-any.whl \
+        gpiozero \
+        lgpio \
+        pigpio \
+        rpi.gpio
 
 
-FROM arm32v7/ubuntu:24.04 AS final
+FROM arm32v7/ubuntu:25.04 AS final
 
 ARG VERSION
 ENV GAUSS_VERSION=${VERSION}
 
 RUN apt-get update \
     && apt-get install --no-install-recommends --yes \
-        python3-pip=24.0+dfsg-1ubuntu1.1 \
-        # python3-lgpio=0.2.0.0-0ubuntu3 \
-        # python3-pigpio=1.78-1.1build1 \
-        # python3-rpi.gpio=0.7.1~a4-1build5 \
-	    sqlite3=3.45.1-1ubuntu2.1 \
+        python3-pip \
+        python3-pandas \
+	    sqlite3 \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
@@ -46,14 +36,9 @@ WORKDIR /wheels
 COPY --from=builder /wheels /wheels
 RUN pip3 install --no-cache-dir --no-index --break-system-packages --find-links=/wheels ./*whl \
     && rm -rf /wheels
-    # gaussgame-${VERSION}-py3-none-any.whl \
-    # && pip3 install --break-system-packages --no-cache-dir \
-    #     gpiozero==2.0.1 \
-
 
 RUN groupadd --system --gid 2000 pythonista \
     && useradd --no-create-home --uid 2000 --gid 2000 pythonista
-# RUN /usr/sbin/adduser --no-create-home --uid 2000 --gid 2000 --disabled-password --gecos Pythonista pythonista
 
 USER pythonista
 WORKDIR /app

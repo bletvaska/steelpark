@@ -7,8 +7,9 @@ services:
       - mosquitto
     restart: always
     environment:
-      GAUSS_BROKER: mosquitto
-      GAUSS_DB_URI: sqlite:////app/db.sqlite
+      GAUSS_MQTT_URI: ${GAUSS_MQTT_URI:-mqtt://@mosquitto:1883}
+      GAUSS_DB_URI: ${GAUSS_DB_URI:-sqlite:////app/db.sqlite}
+      GAUSS_BASE_TOPIC: ${GAUSS_BASE_TOPIC:-steelpark/gauss}
       # PULSE_SERVER: unix:/run/user/1000/pulse/native
       TZ: Europe/Bratislava
     volumes:

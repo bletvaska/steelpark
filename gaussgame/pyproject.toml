@@ -1,6 +1,6 @@
 [project]
 name = "gaussgame"
-version = "2025.4.6"
+version = "2025.7.1"
 description = "Tap Gauss Game for Kulturpark Košice"
 authors = [
     {name = "mirek", email = "mirek@cnl.sk"},
@@ -18,6 +18,8 @@ dependencies = [
     # "numpy (>=2.2.2,<3.0.0)"
     # pigpio
     # lgpio
+    # "pandas>=2.0.0",
+    "scipy>=1.16.0",
 ]
 
 
@@ -38,6 +40,12 @@ indent-width = 4
 
 [tool.ruff.format]
 indent-style = "space"
+
+[dependency-groups]
+dev = [
+    "ipython>=9.4.0",
+    "ruff>=0.12.4",
+]
 
 
 [project.scripts]
