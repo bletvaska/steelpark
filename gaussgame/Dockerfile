@@ -1,14 +1,38 @@
-FROM python:3.13-slim
+# vytvorenie venv so vsetkymi zavislostami pre spustenie aplikacie
+# FROM arm32v7/ubuntu:25.04 AS builder
+# FROM --platform=linux/arm/v7 ubuntu:25.04 AS builder
+FROM ubuntu:25.04 AS builder
 
-RUN groupadd --system --gid 1000 pythonista \
-    && adduser --no-create-home --uid 1000 --gid 1000 --disabled-password --gecos Pythonista pythonista
+ARG VERSION
 
-COPY dist/tapgame-2025.1.1-py3-none-any.whl /tmp/wheels/
+# Inštalácia build nástrojov a systémových závislostí
+RUN apt-get update && apt-get install --yes \
+    build-essential \
+    gfortran \
+    python3-dev \
+    # python3-venv \
+    # python3-pip \
+    libopenblas-dev \
+    liblapack-dev \
+    libffi-dev \
+    curl \
+    && rm -rf /var/lib/apt/lists/*
 
-RUN pip install /tmp/wheels/tapgame-2025.1.1-py3-none-any.whl
+# install uv
+RUN curl -Ls https://astral.sh/uv/install.sh | UV_INSTALL_DIR=/usr/local/bin bash
 
-USER pythonista
+# create venv
+ENV VENV_PATH=/app/venv
+RUN uv venv $VENV_PATH
+ENV PATH="$VENV_PATH/bin:$PATH"
+
+# copy pyproject.toml
+COPY pyproject.toml /app/
+
+
+# # Inštaluj bez wheelov – build zo zdrojov (zrýchlenie vývoja)
+# ENV MAKEFLAGS="-j4"
+# RUN pip3 install --no-binary=numpy,numpy numpy \
+#     && pip3 install pandas scipy
+
 WORKDIR /app
-VOLUME [ "/app"]
-
-CMD [ "python", "-m", "tapgame" ]

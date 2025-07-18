@@ -12,7 +12,7 @@ from loguru import logger
 from .models.settings import get_settings
 
 
-# INPUT_PIN = 4
+# global variables
 client = mqtt.Client(mqtt.CallbackAPIVersion.VERSION2, client_id="bridge")
 settings = get_settings()
 
@@ -79,4 +79,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-    
