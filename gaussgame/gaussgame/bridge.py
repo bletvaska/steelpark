@@ -1,9 +1,11 @@
 #!/usr/bin/env python3
 
-from gpiozero import Button
 import json
-from signal import pause
 from time import sleep
+from signal import pause
+from urllib.parse import urlparse
+
+from gpiozero import Button
 import paho.mqtt.client as mqtt
 from loguru import logger
 
@@ -21,9 +23,17 @@ def on_press():
 
 
 def init_mqtt_client():
-    logger.info(f"Connecting to MQTT Broker {settings.broker}...")
+    parsed = urlparse(settings.mqtt_uri)
+    logger.info(f"Connecting to MQTT Broker {parsed.hostname}...")
 
-    client.username_pw_set(settings.user, settings.password)
+    # Set TLS if the scheme is mqtts
+    if parsed.scheme == "mqtts":
+        client.tls_set()
+
+    # Set username and password if provided
+    if parsed.username and parsed.password:
+        client.username_pw_set(parsed.username, parsed.password)
+
     client.will_set(
         f"{settings.bridge_topic}/status",
         json.dumps({"status": "offline"}),
@@ -33,13 +43,14 @@ def init_mqtt_client():
 
 
 def main():
+    parsed = urlparse(settings.mqtt_uri)
     logger.info('Initializing')
     init_mqtt_client()
 
     button = Button(settings.input_pin)
     button.when_pressed = on_press
 
-    client.connect(settings.broker, settings.port, 60)
+    client.connect(parsed.hostname, parsed.port, 60)
     client.publish(
         f"{settings.bridge_topic}/status",
         json.dumps({"status": "online"}),
@@ -68,3 +79,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+    

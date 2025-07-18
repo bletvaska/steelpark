@@ -4,10 +4,10 @@ FROM arm32v7/ubuntu:25.04 AS builder
 
 ARG VERSION
 
+# install additional packages first
 RUN apt-get update \
     && apt-get install --no-install-recommends --yes \
-        python3-pip \
-        python3-pandas
+        python3-pip
 
 RUN pip3 download --dest /wheels/ \
         gpiozero \
@@ -15,27 +15,36 @@ RUN pip3 download --dest /wheels/ \
         pigpio \
         rpi.gpio
 
-COPY dist/gaussgame-${VERSION}-py3-none-any.whl /wheels/
+# for building the package from source
+# RUN apt-get install --yes --no-install-recommends \
+#         build-essential \
+#         gfortran \
+#         python3-dev \
+#         libopenblas-dev \
+#         liblapack-dev
 
-RUN apt-get install --yes --no-install-recommends \
-        build-essential \
-        gfortran \
-        python3-dev \
-        libopenblas-dev \
-        liblapack-dev \
-    && pip3 download --dest /wheels/ \
+# copy package and download dependencies
+COPY dist/gaussgame-${VERSION}-py3-none-any.whl /wheels/
+RUN pip3 download --dest /wheels/ \
         /wheels/gaussgame-${VERSION}-py3-none-any.whl
 
+# ---------------------------------------------------------------
 
 FROM arm32v7/ubuntu:25.04 AS final
 
 ARG VERSION
 ENV GAUSS_VERSION=${VERSION}
 
+# create system user and group for running the application
+RUN groupadd --system --gid 2000 pythonista \
+    && useradd --no-create-home --uid 2000 --gid 2000 pythonista
+
+# install system dependecies
 RUN apt-get update \
     && apt-get install --no-install-recommends --yes \
         python3-pip \
         python3-pandas \
+        python3-scipy \
 	    sqlite3 \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
@@ -46,11 +55,8 @@ COPY --from=builder /wheels /wheels
 RUN pip3 install --no-cache-dir --no-index --break-system-packages --find-links=/wheels ./*whl \
     && rm -rf /wheels
 
-RUN groupadd --system --gid 2000 pythonista \
-    && useradd --no-create-home --uid 2000 --gid 2000 pythonista
-
+# set runtime attributes
 USER pythonista
 WORKDIR /app
 VOLUME [ "/app"]
-
 CMD [ "/usr/bin/python3", "-m", "gaussgame" ]
